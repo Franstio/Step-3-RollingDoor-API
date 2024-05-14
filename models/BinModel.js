@@ -18,6 +18,9 @@ const bin = db.define('bin', {
     },
     type_waste: {
         type: DataTypes.INTEGER
+    },
+    max_weight: {
+        type:DataTypes.INTEGER,
     }
 }, {
     freezeTableName: true,

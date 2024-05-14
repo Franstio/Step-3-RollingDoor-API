@@ -49,3 +49,36 @@ export const UpdateBinWeight = async (req,res) =>{
     data.save();
     res.status(200).json({msg:'ok'});
 }
+
+export const CheckBinCapacity = async (req, res) => {
+    const { type_waste, neto } = req.body;
+
+    try {
+        const bins = await bin.findAll({
+            where: {
+                type_waste: type_waste
+            }
+        });
+
+        if (!bins || bins.length === 0) {
+            return res.status(404).json({ success: false, message: 'No bins found for the given waste type' });
+        }
+
+    
+        const eligibleBins = bins.filter(bin => (bin.current_weight + neto) <= bin.capacity);
+
+        if (eligibleBins.length === 0) {
+            return res.status(200).json({ success: false, message: 'No bins with enough capacity found' });
+        }
+
+       
+        eligibleBins.sort((a, b) => (b.capacity - (b.current_weight + neto)) - (a.capacity - (a.current_weight + neto)));
+
+        const selectedBin = eligibleBins[0];
+
+        res.status(200).json({ success: true, bin: selectedBin });
+    } catch (error) {
+        console.error('Error checking bin capacity:', error);
+        res.status(500).json({ success: false, message: 'Internal Server Error' });
+    }
+};

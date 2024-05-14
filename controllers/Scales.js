@@ -7,8 +7,7 @@ const Timbangan = new SerialPort({
     stopBits: 1,
     parity: 'none',
     }); 
-
-
+    
 let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
@@ -58,3 +57,5 @@ export const getScales50Kg =(io) => {
         res.status(500).json({ msg: error.message });
     }
 };
+
+
