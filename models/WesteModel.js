@@ -1,7 +1,7 @@
 import { Sequelize, Op } from "sequelize";
 import db from "../config/db.js";
 import Container from "./ContainerModel.js";
-import bin from "./BinModel.js";
+//import bin from "./BinModel.js";
 
 const { DataTypes } = Sequelize;
 

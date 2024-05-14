@@ -24,7 +24,7 @@ export const ScanContainer = async (req, res) => {
     const { containerId } = req.body;
     console.log(containerId)
     try {
-        const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id"]}] }], where: { name: containerId } });
+        const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
         if (container) {
             res.json({ container:container });
         } else {
@@ -65,14 +65,14 @@ export const CheckBinCapacity = async (req, res) => {
         }
 
     
-        const eligibleBins = bins.filter(bin => (bin.current_weight + neto) <= bin.capacity);
+        const eligibleBins = bins.filter(bin => (bin.weight + neto) <= bin.max_weight);
 
         if (eligibleBins.length === 0) {
             return res.status(200).json({ success: false, message: 'No bins with enough capacity found' });
         }
 
        
-        eligibleBins.sort((a, b) => (b.capacity - (b.current_weight + neto)) - (a.capacity - (a.current_weight + neto)));
+        eligibleBins.sort((a, b) => (b.max_weight - (b.weight + neto)) - (a.max_weight - (a.weight + neto)));
 
         const selectedBin = eligibleBins[0];
 
