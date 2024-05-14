@@ -4,6 +4,8 @@ import waste from "../models/WesteModel.js";
 import transaction from "../models/TransactionModel.js"
 import bin from "../models/BinModel.js";
 import moment from 'moment';
+
+
 export const ScanBadgeid = async (req, res) => {
     console.log(req.body);
     const { badgeId } = req.body;
@@ -54,27 +56,50 @@ export const CheckBinCapacity = async (req, res) => {
     const { type_waste, neto } = req.body;
 
     try {
+        // Mengambil semua tempat sampah yang sesuai dengan type_waste dari database
         const bins = await bin.findAll({
             where: {
                 type_waste: type_waste
             }
         });
 
+        // Jika tidak ada tempat sampah yang ditemukan untuk type_waste yang diberikan
         if (!bins || bins.length === 0) {
             return res.status(404).json({ success: false, message: 'No bins found for the given waste type' });
         }
 
-    
-        const eligibleBins = bins.filter(bin => (bin.weight + neto) <= bin.max_weight);
+        // Menyaring tempat sampah yang memiliki kapasitas cukup untuk neto
+        let eligibleBins = bins.filter(bin => (bin.weight + neto) <= bin.max_weight);
 
+        // Jika tidak ada tempat sampah yang memenuhi kapasitas
         if (eligibleBins.length === 0) {
             return res.status(200).json({ success: false, message: 'No bins with enough capacity found' });
         }
 
-       
-        eligibleBins.sort((a, b) => (b.max_weight - (b.weight + neto)) - (a.max_weight - (a.weight + neto)));
+        // Mengurutkan tempat sampah berdasarkan kapasitas yang hendak penuh terlebih dahulu
+        eligibleBins = eligibleBins.sort((a, b) =>  (a.max_weight - (a.weight + neto)) -    (b.max_weight - (b.weight + neto)));
+        console.log(eligibleBins);
+        // Memilih tempat sampah yang hendak penuh
+        let selectedBin = eligibleBins[0];
+        let remainingNeto = neto;
 
-        const selectedBin = eligibleBins[0];
+     /*    while (selectedBin && remainingNeto > 0) {
+            const availableCapacity = selectedBin.max_weight - selectedBin.weight;
+            
+            if (remainingNeto <= availableCapacity) {
+                selectedBin.weight += remainingNeto;
+                remainingNeto = 0;
+            } else {
+                selectedBin.weight += availableCapacity;
+                remainingNeto -= availableCapacity;
+                eligibleBins.shift(); // Menghapus bin yang sudah penuh dari daftar
+                selectedBin = eligibleBins[0]; // Memilih bin berikutnya
+            }
+        } */
+
+        if (eligibleBins.length < 1) {
+            return res.status(200).json({ success: false, message: 'Not enough capacity in any bins' });
+        }
 
         res.status(200).json({ success: true, bin: selectedBin });
     } catch (error) {
@@ -82,3 +107,4 @@ export const CheckBinCapacity = async (req, res) => {
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
+

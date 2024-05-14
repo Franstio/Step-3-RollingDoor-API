@@ -12,7 +12,12 @@ let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
     try {
-        let response;
+       /*  let response;
+        console.log("TEt");
+        setInterval(function(){
+            response = { weight50Kg: 20 };
+            io.emit('data', response);
+        },5000); */
         Timbangan.on('data', (rawData) => {
            // console.log('Data Timbangan:', weight50Kg.toString());
             // Kirim data yang diterima sebagai respons ke clien
@@ -48,8 +53,6 @@ export const getScales50Kg =(io) => {
         Timbangan.on('error', (error) => {
             console.log(error);
         });
-
-
         if (response != undefined && response != null) {
             res.status(200).json(response);
         }
