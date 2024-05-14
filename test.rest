@@ -1,0 +1,22 @@
+###
+buka door
+POST http://localhost:5000/rollingdoorUp/
+content-type: application/json
+
+{
+"address":20,
+"value": 1,
+"idrollingdoor" : 12
+
+}
+###
+tutup door
+POST http://localhost:5000/rollingDoorDown/
+content-type: application/json
+
+{
+"address":20,
+"value": 1,
+"idrollingdoor" : 12
+
+}
