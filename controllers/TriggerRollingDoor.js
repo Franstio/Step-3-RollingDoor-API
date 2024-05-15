@@ -1,8 +1,7 @@
-import ModbusRTU from 'modbus-serial';
-import { getClient, switchLamp } from '../Lib/PLCUtility.js';
+//import ModbusRTU from 'modbus-serial';
+import { client, switchLamp } from '../Lib/PLCUtility.js';
 import bin from '../models/BinModel.js';
-const client = getClient();
-client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
+//client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
 //client.setTimeout(5000);
 
