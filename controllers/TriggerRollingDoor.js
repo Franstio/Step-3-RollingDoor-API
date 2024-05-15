@@ -1,8 +1,11 @@
 import ModbusRTU from 'modbus-serial';
+import { switchLamp } from '../Lib/PLCUtility';
+import bin from '../models/BinModel';
 const client = new ModbusRTU();
 client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
 client.setTimeout(5000);
+
 
 
 export const rollingdoorUp = async (req, res) => {
@@ -32,7 +35,26 @@ export const rollingdoorUp = async (req, res) => {
         res.status(500).json({ msg: error });
     }
 };
-
+export const triggerAvailableBin = async (req,res) =>{
+    const { wasteId, valueIsOpen } = req.body;
+    const availableBin = await bin.findAll(
+        {
+            where:{
+                type_waste: wasteId
+            }
+        }
+    );
+    if (availableBin.length < 1)
+    {
+        res.status(200).json({msg: 'Success but no bin available'});
+    }
+    for (let i=0;i<availableBin.length;i++)
+    {
+        await switchLamp("RED",availableBin[i].weight >= availableBin[i].max_weight);
+        await switchLamp("GREEN",availableBin[i].weight < availableBin[i].max_weight && valueIsOpen);
+    }
+    res.status(200).json({msg:"Success Trigger bin"});
+}
 export const rollingDoorDown = async (req, res) => {
     try {
         const address = 21;
