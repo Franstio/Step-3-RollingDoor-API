@@ -12,8 +12,8 @@ let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
     try {
-       /*  let response;
-        console.log("TEt");
+         let response;
+       /* console.log("TEt");
         setInterval(function(){
             response = { weight50Kg: 20 };
             io.emit('data', response);
@@ -57,7 +57,8 @@ export const getScales50Kg =(io) => {
             res.status(200).json(response);
         }
     } catch (error) {
-        res.status(500).json({ msg: error.message });
+	console.log(error);
+//      res.status(500).json({ msg: error.message });
     }
 };
 

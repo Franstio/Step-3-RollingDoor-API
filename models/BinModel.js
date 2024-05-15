@@ -14,13 +14,13 @@ const bin = db.define('bin', {
         type: DataTypes.STRING,
     },
     weight: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL,
     },
     type_waste: {
         type: DataTypes.INTEGER
     },
     max_weight: {
-        type:DataTypes.INTEGER,
+        type:DataTypes.DECIMAL,
     }
 }, {
     freezeTableName: true,
