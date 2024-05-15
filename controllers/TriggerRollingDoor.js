@@ -49,7 +49,7 @@ export const triggerAvailableBin = async (req,res) =>{
     }
     for (let i=0;i<availableBin.length;i++)
     {
-        console.log([parseFloat(availableBin[i].weight) , parseFloat(availableBin[i].max_weight)])
+        console.log([parseFloat(availableBin[i].weight) , parseFloat(availableBin[i].max_weight),valueIsOpen])
         await switchLamp("RED",parseFloat(availableBin[i].weight) >= parseFloat(availableBin[i].max_weight));
         await switchLamp("GREEN",parseFloat(availableBin[i].weight) < parseFloat(availableBin[i].max_weight) && valueIsOpen);
     }
