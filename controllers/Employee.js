@@ -70,7 +70,7 @@ export const CheckBinCapacity = async (req, res) => {
         }
 
         // Menyaring tempat sampah yang memiliki kapasitas cukup untuk neto
-        let eligibleBins = bins.filter(bin => (bin.weight + neto) <= bin.max_weight);
+        let eligibleBins = bins.filter(bin => (parseFloat(bin.weight) + parseFloat(neto)) <= parseFloat(bin.max_weight));
 
         // Jika tidak ada tempat sampah yang memenuhi kapasitas
         if (eligibleBins.length === 0) {
@@ -78,7 +78,7 @@ export const CheckBinCapacity = async (req, res) => {
         }
 
         // Mengurutkan tempat sampah berdasarkan kapasitas yang hendak penuh terlebih dahulu
-        eligibleBins = eligibleBins.sort((a, b) =>  (a.max_weight - (a.weight + neto)) -    (b.max_weight - (b.weight + neto)));
+        eligibleBins = eligibleBins.sort((a, b) =>  (parseFloat(a.max_weight) - (parseFloat(a.weight) + parseFloat(neto))) -    (parseFloat(b.max_weight) - (parseFloat(b.weight) + parseFloat(neto))));
         console.log(eligibleBins);
         // Memilih tempat sampah yang hendak penuh
         let selectedBin = eligibleBins[0];
