@@ -4,7 +4,7 @@ import waste from "../models/WesteModel.js";
 import transaction from "../models/TransactionModel.js"
 import bin from "../models/BinModel.js";
 import moment from 'moment';
-
+import { switchLamp } from "../Lib/PLCUtility.js";
 
 export const ScanBadgeid = async (req, res) => {
     console.log(req.body);
@@ -48,15 +48,13 @@ export const UpdateBinWeight = async (req,res) =>{
     const {binId,neto} = req.body;
     const data = await bin.findOne({where: {id:binId}});
     data.weight = parseFloat(neto) + parseFloat(data.weight);
-    console.log({neto:neto,weight:data.weight});
-    data.weight = (Math.round(data.weight * 100) / 100).toFixed(2);
-    console.log({neto:neto,weight:data.weight});
     data.save();
+    await switchLamp("RED",data.weight >= parseFloat(data.max_weight))
     res.status(200).json({msg:'ok'});
 }
 
 export const CheckBinCapacity = async (req, res) => {
-    let { type_waste, neto } = req.body;
+    const { type_waste, neto } = req.body;
 
     try {
         // Mengambil semua tempat sampah yang sesuai dengan type_waste dari database
@@ -65,22 +63,22 @@ export const CheckBinCapacity = async (req, res) => {
                 type_waste: type_waste
             }
         });
-//	console.log(bins);
+
         // Jika tidak ada tempat sampah yang ditemukan untuk type_waste yang diberikan
         if (!bins || bins.length === 0) {
             return res.status(404).json({ success: false, message: 'No bins found for the given waste type' });
         }
 
         // Menyaring tempat sampah yang memiliki kapasitas cukup untuk neto
-        let eligibleBins = bins.filter(bin => (parseFloat(bin.weight) + parseFloat(neto)) <= parseFloat(bin.max_weight));
+        let eligibleBins = bins.filter(bin => (bin.weight + neto) <= bin.max_weight);
 
         // Jika tidak ada tempat sampah yang memenuhi kapasitas
         if (eligibleBins.length === 0) {
             return res.status(200).json({ success: false, message: 'No bins with enough capacity found' });
         }
-	neto = parseFloat(neto);
+
         // Mengurutkan tempat sampah berdasarkan kapasitas yang hendak penuh terlebih dahulu
-        eligibleBins = eligibleBins.sort((a, b) =>  (parseFloat(a.max_weight) - (parseFloat(a.weight) + neto)) -    (parseFloat(b.max_weight) - (parseFloat(b.weight) + neto)));
+        eligibleBins = eligibleBins.sort((a, b) =>  (a.max_weight - (a.weight + neto)) -    (b.max_weight - (b.weight + neto)));
         console.log(eligibleBins);
         // Memilih tempat sampah yang hendak penuh
         let selectedBin = eligibleBins[0];
