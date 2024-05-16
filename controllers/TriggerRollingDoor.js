@@ -50,7 +50,7 @@ export const triggerAvailableBin = async (req,res) =>{
     for (let i=0;i<availableBin.length;i++)
     {
         console.log([parseFloat(availableBin[i].weight) , parseFloat(availableBin[i].max_weight),valueIsOpen,availableBin[i]])
-        await switchLamp(availableBin[i].id, "RED",parseFloat(availableBin[i].weight) >= parseFloat(availableBin[i].max_weight));
+        await switchLamp(availableBin[i].id, "RED",parseFloat(availableBin[i].weight) >= parseFloat(availableBin[i].max_weight) && valueIsOpen);
         await switchLamp(availableBin[i].id,"GREEN",parseFloat(availableBin[i].weight) < parseFloat(availableBin[i].max_weight) && valueIsOpen);
     }
     res.status(200).json({msg:"Success Trigger bin"});
