@@ -18,6 +18,16 @@ export const getScales50Kg =(io) => {
             response = { weight50Kg: 20 };
             io.emit('data', response);
         },5000); */
+	io.on('connect',()=>{
+		console.log("reconnect scale");
+		Timbangan.open('/dev/ttyUSB1',{
+    		    baudRate: 9600,
+   		    dataBits: 8,
+		    stopBits: 1,
+		    parity: 'none',
+
+		});
+	});
         Timbangan.on('data', (rawData) => {
            // console.log('Data Timbangan:', weight50Kg.toString());
             // Kirim data yang diterima sebagai respons ke clien
