@@ -20,12 +20,8 @@ export const getScales50Kg =(io) => {
         },5000); */
 	io.on('connect',()=>{
 		console.log("reconnect scale");
-		Timbangan.open('/dev/ttyUSB1',{
-    		    baudRate: 9600,
-   		    dataBits: 8,
-		    stopBits: 1,
-		    parity: 'none',
-
+		Timbangan.open(()=>{
+			console.log("opening port");
 		});
 	});
         Timbangan.on('data', (rawData) => {
