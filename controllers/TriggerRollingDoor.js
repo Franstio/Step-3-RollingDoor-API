@@ -81,7 +81,7 @@ export const rollingDoorDown = async (req, res) => {
 
 
 export const switchLampAPI = async (req,res) => {
-    const {id,lamp,value} = req.body;
+    const {id,lamp,value} = req.query;
     console.log([id,lamp,value,value ? 1 : 0]);
     await switchLamp(id,lamp,value);
     res.status(200).json({msg:"ok"});
