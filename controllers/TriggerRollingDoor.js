@@ -80,3 +80,7 @@ export const rollingDoorDown = async (req, res) => {
 
 
 
+export const switchLampAPI = async (req,res) => {
+    const {id,lamp,value} = req.body;
+    await switchLamp(id,lamp,value);
+}
