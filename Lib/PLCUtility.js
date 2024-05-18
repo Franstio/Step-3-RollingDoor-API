@@ -26,10 +26,11 @@ export const switchLamp = async (id,lampType, isAlive) => {
     await new Promise(resolve=> setTimeout(function(){return resolve();},2000));
 }
 
-export const checkMaxWeight = async ()=>{
-    const dataBin = await bin.findAll();
+export const checkMaxWeight = ()=>{
+    bin.findAll().then(dataBin=>{
     for (let i=0;i<dataBin.length;i++)
     {
-        await switchLamp(dataBin[i].id,'RED',dataBin.weight >= dataBin.max_weight);
+        switchLamp(dataBin[i].id,'RED',dataBin.weight >= dataBin.max_weight);
     }
+    });
 }
