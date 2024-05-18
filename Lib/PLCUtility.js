@@ -30,7 +30,7 @@ export const checkMaxWeight = async ()=>{
     const dataBin = await bin.findAll();
     for (let i=0;i<dataBin.length;i++)
     {
-        console.log({id:dataBin[i]});
+        console.log({id:dataBin[i].id});
         await switchLamp(dataBin[i].id,'RED',parseFloat(dataBin[i].weight) >= parseFloat(dataBin[i].max_weight));
     }
 }
