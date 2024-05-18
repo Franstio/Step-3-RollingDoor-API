@@ -27,7 +27,7 @@ export const switchLamp = async (id,lampType, isAlive) => {
 }
 
 export const checkMaxWeight = async ()=>{
-    dataBin = bin.findAll();
+    const dataBin = await bin.findAll();
     for (let i=0;i<dataBin.length;i++)
     {
         await switchLamp(dataBin[i].id,'RED',dataBin.weight >= dataBin.max_weight);
