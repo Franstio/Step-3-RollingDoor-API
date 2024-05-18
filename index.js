@@ -56,7 +56,5 @@ server.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });
 getScales50Kg(io);
-setInterval(function (){
-  console.log("check max weight");
-  checkMaxWeight().then("check max weight complete");
-},2000);
+console.log("check max weight");
+checkMaxWeight()
