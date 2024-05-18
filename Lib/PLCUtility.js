@@ -30,7 +30,7 @@ export const checkMaxWeight = ()=>{
     bin.findAll().then(dataBin=>{
     for (let i=0;i<dataBin.length;i++)
     {
-        switchLamp(dataBin[i].id,'RED',dataBin.weight >= dataBin.max_weight).then(function(){
+        switchLamp(dataBin[i].id,'RED',dataBin[i].weight >= dataBin[i].max_weight).then(function(){
             i=i;
         });
     }
