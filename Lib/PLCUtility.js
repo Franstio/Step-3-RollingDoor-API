@@ -8,29 +8,28 @@ client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
 client.setTimeout(5000);
 export default client;
-export const switchLamp = async (id,lampType, isAlive) => {
+export const switchLamp = async (id, lampType, isAlive) => {
     const dict = {
         "RED": 30,
         "GREEN": 31
     };
     const address = dict[lampType];
     client.setID(id);
-    try
-    {
+    try {
         await client.writeRegister(address, isAlive ? 1 : 0);
     }
-    catch(error)
-    {
-        console.log([error,id,lampType,address,isAlive]);
+    catch (error) {
+        console.log([error, id, lampType, address, isAlive]);
     }
-    await new Promise(resolve=> setTimeout(function(){return resolve();},2000));
+    await new Promise(resolve => setTimeout(function () { return resolve(); }, 2000));
 }
 
-export const checkMaxWeight = async ()=>{
-    const dataBin = await bin.findAll();
-    for (let i=0;i<dataBin.length;i++)
-    {
-        console.log({id:dataBin[i].id});
-        await switchLamp(dataBin[i].id,'RED',parseFloat(dataBin[i].weight) >= parseFloat(dataBin[i].max_weight));
+export const checkMaxWeight = async () => {
+    while (true) {
+        const dataBin = await bin.findAll();
+        for (let i = 0; i < dataBin.length; i++) {
+            console.log({ id: dataBin[i].id });
+            await switchLamp(dataBin[i].id, 'RED', parseFloat(dataBin[i].weight) >= parseFloat(dataBin[i].max_weight));
+        }
     }
 }
