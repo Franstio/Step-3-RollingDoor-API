@@ -8,6 +8,7 @@ import { Server } from "socket.io";
 import db from "./config/db.js";
 import {getScales50Kg} from "./controllers/Scales.js";
 import bodyParser from "body-parser";
+import { checkMaxWeight } from "./Lib/PLCUtility.js";
 
 
 const app = express();
@@ -55,3 +56,7 @@ server.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });
 getScales50Kg(io);
+setInterval(function (){
+  console.log("check max weight");
+  checkMaxWeight();
+},2000);

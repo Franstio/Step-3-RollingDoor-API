@@ -1,4 +1,5 @@
 import ModbusRTU from 'modbus-serial';
+import bin from '../models/BinModel';
 
 
 
@@ -22,5 +23,13 @@ export const switchLamp = async (id,lampType, isAlive) => {
     {
         console.log([error,id,lampType,address,isAlive]);
     }
-    await new Promise(resolve=> setTimeout(function(){return resolve();},1250));
+    await new Promise(resolve=> setTimeout(function(){return resolve();},2000));
+}
+
+export const checkMaxWeight = async ()=>{
+    dataBin = bin.findAll();
+    for (let i=0;i<dataBin.length;i++)
+    {
+        await switchLamp(dataBin[i].id,'RED',dataBin.weight >= dataBin.max_weight);
+    }
 }
