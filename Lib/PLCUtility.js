@@ -1,5 +1,5 @@
 import ModbusRTU from 'modbus-serial';
-import bin from '../models/BinModel';
+import bin from '../models/BinModel.js';
 
 
 
