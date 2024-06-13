@@ -85,9 +85,13 @@ export const switchLampAPI = async (req,res) => {
 
 export const rollingdoorUpManualWeb = async (req, res) => {
     try {
-        const {idRollingDoor} = req.body;
-	console.log({id: idRollingDoor});
+        const {idRollingDoor,role} = req.body;
+        
+        if (role !== 1) {
+            return res.status(403).json({ msg: 'Access denied.' });
+        }
 
+	   console.log({id: idRollingDoor});
        client.setID(idRollingDoor);
         if (!client.isOpen) {
             client.open( () => {
@@ -115,7 +119,10 @@ export const rollingDoorDownManualWeb = async (req, res) => {
     try {
         const address = 21;
         const value = 1;
-        const {idRollingDoor} = req.body;
+        const {idRollingDoor,role} = req.body;
+        if (role !== 1) {
+            return res.status(403).json({ msg: 'Access denied.' });
+        }
 	console.log(idRollingDoor);
 
         client.setID(idRollingDoor);
