@@ -4,7 +4,7 @@ import waste from "../models/WesteModel.js";
 import transaction from "../models/TransactionModel.js"
 import bin from "../models/BinModel.js";
 import moment from 'moment';
-
+import { switchLamp } from "../Lib/PLCUtility.js";
 
 export const ScanBadgeid = async (req, res) => {
     console.log(req.body);
