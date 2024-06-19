@@ -1,5 +1,5 @@
 //import ModbusRTU from 'modbus-serial';
-//import client, { switchLamp } from '../Lib/PLCUtility.js';
+import client, { switchLamp } from '../Lib/PLCUtility.js';
 import Container from "../models/ContainerModel.js"
 import waste from "../models/WesteModel.js";
 import bin from "../models/BinModel.js";
@@ -151,7 +151,7 @@ export const step4ActivedDoor = async (req,res) => {
     const val = 1;
     console.log(container.containerId);
     client.setID(container.containerId);
-    await client.writeRegister(val);
+    await client.writeRegister(action,val);
     if (doorStatus) {
         res.status(200).json({ msg: `Rolling Door Buka` });
     } else {
