@@ -25,15 +25,15 @@ try {
 
 const port = 5000;
 app.use(cors({
-  credentials: true,
-  origin: 'http://localhost:3000'
+  credentials: false,
+  origin: '*'
 }));
 
 app.use(bodyParser.json());
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000"
+    origin: "*"
   }
 });
 
