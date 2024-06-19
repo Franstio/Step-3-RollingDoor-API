@@ -149,7 +149,7 @@ export const step4ActivedDoor = async (req,res) => {
     }
     let action = doorStatus ? 20 : 21;
     const val = 1;
-    console.log({container:container});
+    console.log({container:container,action:action,doorStatus:doorStatus});
     client.setID(container.containerId);
     await client.writeRegister(action,val);
     if (doorStatus) {
