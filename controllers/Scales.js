@@ -1,24 +1,23 @@
 import { SerialPort } from 'serialport';
 
-/* const Timbangan = new SerialPort({
+const Timbangan = new SerialPort({
     path: '/dev/ttyUSB1',
     baudRate: 9600,
     dataBits: 8,
     stopBits: 1,
     parity: 'none',
     }); 
-     */
 let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
     try {
          let response;
-       /* console.log("TEt");
+       console.log("TEt");
         setInterval(function(){
             response = { weight50Kg: 20 };
             io.emit('data', response);
-        },5000); */
-	/* io.on('connectScale',()=>{
+        },5000);
+	io.on('connectScale',()=>{
 		console.log("reconnect scale");
 		Timbangan.open(()=>{
 			console.log("opening port");
@@ -58,7 +57,7 @@ export const getScales50Kg =(io) => {
 
         Timbangan.on('error', (error) => {
             console.log(error);
-        }); */
+        });
 		
         if (response != undefined && response != null) {
             res.status(200).json(response);
