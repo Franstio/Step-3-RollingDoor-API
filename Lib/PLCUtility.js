@@ -3,7 +3,7 @@ import bin from '../models/BinModel.js';
 
 
 
-/* const client = new ModbusRTU();
+ const client = new ModbusRTU();
 client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
 client.setTimeout(5000);
@@ -22,7 +22,7 @@ export const switchLamp = async (id, lampType, isAlive) => {
         console.log([error, id, lampType, address, isAlive]);
     }
     await new Promise(resolve => setTimeout(function () { return resolve(); }, 2000));
-} */
+} 
 
 export const checkMaxWeight = async () => {
     while (true) {
