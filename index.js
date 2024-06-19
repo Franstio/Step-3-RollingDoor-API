@@ -55,6 +55,6 @@ app.use(ScalesRoute);
 server.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });
-//getScales50Kg(io);
+getScales50Kg(io);
 console.log("check max weight");
 //checkMaxWeight()
