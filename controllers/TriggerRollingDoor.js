@@ -151,10 +151,18 @@ export const step4ActivedDoor = async (req,res) => {
     const val = 1;
     console.log([container.toJSON().containerId,action,doorStatus]);
     client.setID(container.toJSON().containerId);
+    try
+    {
     const res2 = await client.writeRegister(action,val);
     if (doorStatus) {
         res.status(200).json({ msg: `Rolling Door Buka `,clientId: container.toJSON().containerId,address:action,value:val,plcres: res2});
     } else {
         res.status(200).json({ msg: `Rolling Door Tutup`,clientId:container.toJSON().containerId,address:action,value:val,plcres: res2 });
+    }
+    }
+    catch(err)
+    {
+        console.log(err);
+        res.status(500).json({err:err});
     }
 }
