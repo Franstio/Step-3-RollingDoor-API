@@ -17,8 +17,8 @@ export const rollingdoorUp = async (req, res) => {
         const address = 20;
         const value = 1;
         const log = await client.writeRegister(address,value);
-//        const data = await client.readHoldingRegisters(address, 8);
-//        console.log({ log: log, data: data });
+       const data = await client.readHoldingRegisters(address, 8);
+        console.log({ log: log, data: data });
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka` });
         } else {
