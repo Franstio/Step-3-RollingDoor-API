@@ -163,6 +163,6 @@ export const step4ActivedDoor = async (req,res) => {
     catch(err)
     {
         console.log(err);
-        res.status(500).json({err:err});
+        res.status(500).json({err:err,clientId:container.toJSON().containerId,address:action,value:val});
     }
 }
