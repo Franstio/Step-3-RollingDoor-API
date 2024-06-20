@@ -37,7 +37,7 @@ export const rollingdoorUp = async (req, res) => {
         const data = await client.readHoldingRegisters(address, 8);
         console.log({ log: log, data: data });
         if (value === 1) {
-            res.status(200).json({ msg: `Rolling Door Buka` });
+            res.status(200).json({ msg: `Rolling Door Buka`,client:clientId,address:address,val:value,plc_response:log });
         } else {
             res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
         }
