@@ -94,14 +94,11 @@ export const rollingDoorDown = async (req, res) => {
         {
        client.setID(clientId);
 //	await new Promise(resolve => setTimeout(resolve,5000));
-        await client.writeRegister(address, value);
+       const resPlc =  await client.writeRegister(address, value);
 //        const data = await client.readHoldingRegisters(address, 8);
 
-        if (value === 1) {
-            res.status(200).json({ msg: `Rolling Door Ditutup ` + address + " " + value });
-        } else {
-            res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
-        }
+        res.status(200).json({ msg: `Rolling Door Ditutup `,client:clientId,address:address,val:value,plc_response:resPlc});
+        return;
     } catch (error) {
         if (error.name=="TransactionTimedOutError")
         {
