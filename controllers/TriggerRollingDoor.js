@@ -17,7 +17,7 @@ export const rollingdoorUp = async (req, res) => {
         const address = 20;
         const value = 1;
         const log = await client.writeRegister(address,value);
-       const data = await client.readHoldingRegisters(address, 8);
+        const data = await client.readHoldingRegisters(address, 8);
         console.log({ log: log, data: data });
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka` });
@@ -151,10 +151,10 @@ export const step4ActivedDoor = async (req,res) => {
     const val = 1;
     console.log([container.toJSON().containerId,action,doorStatus]);
     client.setID(container.toJSON().containerId);
-    await client.writeRegister(action,val);
+    const res2 = await client.writeRegister(action,val);
     if (doorStatus) {
-        res.status(200).json({ msg: `Rolling Door Buka` });
+        res.status(200).json({ msg: `Rolling Door Buka `,address:action,value:val,plcres: res2});
     } else {
-        res.status(200).json({ msg: `Rolling Door Tutup` });
+        res.status(200).json({ msg: `Rolling Door Tutup`,address:action,value:val,plcres: res2 });
     }
 }
