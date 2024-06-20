@@ -21,6 +21,9 @@ const bin = db.define('bin', {
     },
     max_weight: {
         type:DataTypes.DECIMAL,
+    },
+    clientId: {
+        type: DataTypes.INTEGER
     }
 }, {
     freezeTableName: true,
