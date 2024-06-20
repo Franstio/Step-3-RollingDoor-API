@@ -19,6 +19,8 @@ export const rollingdoorUp = async (req, res) => {
         const {idRollingDoor} = req.body;
         const clientId = await getClientId(idRollingDoor);
     	console.log({id: clientId});
+        const address = 20;
+        const value = 1;
         if (clientId==null)
         {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
@@ -31,8 +33,6 @@ export const rollingdoorUp = async (req, res) => {
                 console.log("modbus open");
            });
         }
-        const address = 20;
-        const value = 1;
         const log = await client.writeRegister(address,value);
         const data = await client.readHoldingRegisters(address, 8);
         console.log({ log: log, data: data });
@@ -44,7 +44,17 @@ export const rollingdoorUp = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
+        if (error.name=="TransactionTimedOutError")
+        {
+            if (value === 1) {
+                res.status(200).json({ msg: `Rolling Door Buka` });
+            } else {
+                res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
+            }
+    
+        }
+        else
+            res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
     }
 };
 export const triggerAvailableBin = async (req,res) =>{
@@ -69,7 +79,6 @@ export const triggerAvailableBin = async (req,res) =>{
     res.status(200).json({msg:"Success Trigger bin"});
 }
 export const rollingDoorDown = async (req, res) => {
-    try {
         const address = 21;
         const value = 1;
         const {idRollingDoor} = req.body;
@@ -81,6 +90,8 @@ export const rollingDoorDown = async (req, res) => {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
             return ;
         }
+        try
+        {
        client.setID(clientId);
 //	await new Promise(resolve => setTimeout(resolve,5000));
         await client.writeRegister(address, value);
@@ -92,7 +103,17 @@ export const rollingDoorDown = async (req, res) => {
             res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
         }
     } catch (error) {
-        res.status(500).json({ msg: error});
+        if (error.name=="TransactionTimedOutError")
+        {
+            if (value === 1) {
+                res.status(200).json({ msg: `Rolling Door Ditutup ` + address + " " + value });
+            } else {
+                res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
+            }
+    
+        }
+        else
+            res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
     }
 };
 
@@ -105,13 +126,14 @@ export const switchLampAPI = async (req,res) => {
 
 
 export const rollingdoorUpManualWeb = async (req, res) => {
-    try {
         const {idRollingDoor,role} = req.body;
         
         if (role !== 1) {
             return res.status(403).json({ msg: 'Access denied.' });
         }
 
+        const address = 20;
+        const value = 1;
         const clientId = await getClientId(idRollingDoor);
     	console.log({id: clientId});
         if (clientId==null)
@@ -119,14 +141,14 @@ export const rollingdoorUpManualWeb = async (req, res) => {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
             return ;
         }
+        try
+        {
        client.setID(clientId);
         if (!client.isOpen) {
             client.open( () => {
                 console.log("modbus open");
            });
         }
-        const address = 20;
-        const value = 1;
         const log = await client.writeRegister(address,value);
 //        const data = await client.readHoldingRegisters(address, 8);
 //        console.log({ log: log, data: data });
@@ -138,12 +160,21 @@ export const rollingdoorUpManualWeb = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ msg: error });
+        if (error.name=="TransactionTimedOutError")
+        {
+            if (value === 1) {
+                res.status(200).json({ msg: `Rolling Door Buka` });
+            } else {
+                res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
+            }
+    
+        }
+        else
+            res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
     }
 };
 
 export const rollingDoorDownManualWeb = async (req, res) => {
-    try {
         const address = 21;
         const value = 1;
         const {idRollingDoor,role} = req.body;
@@ -158,6 +189,8 @@ export const rollingDoorDownManualWeb = async (req, res) => {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
             return ;
         }
+        try
+        {
        client.setID(clientId);
 //	await new Promise(resolve => setTimeout(resolve,5000));
         await client.writeRegister(address, value);
@@ -169,7 +202,17 @@ export const rollingDoorDownManualWeb = async (req, res) => {
             res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
         }
     } catch (error) {
-        res.status(500).json({ msg: error});
+        if (error.name=="TransactionTimedOutError")
+        {
+            if (value === 1) {
+                res.status(200).json({ msg: `Rolling Door Ditutup ` + address + " " + value });
+            } else {
+                res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
+            }
+    
+        }
+        else
+            res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
     }
 };
 
@@ -201,7 +244,18 @@ export const step4ActivedDoor = async (req,res) => {
     }
     catch(err)
     {
+        if (err.name=="TransactionTimedOutError")
+        {
+            if (doorStatus) {
+                res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val,plcres: res2});
+            } else {
+                res.status(200).json({ msg: `Rolling Door Tutup`,clientId:_bin.toJSON().clientId,address:action,value:val,plcres: res2 });
+            }
+        }
+        else
+        {
         console.log(err);
         res.status(500).json({err:err,clientId:_bin.toJSON().clientId,address:action,value:val});
+        }
     }
 }
