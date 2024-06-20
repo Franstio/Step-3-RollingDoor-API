@@ -16,7 +16,6 @@ const getClientId =  async (rollingDoorId)=>{
     return sBin.toJSON().clientId;
 }
 export const rollingdoorUp = async (req, res) => {
-    try {
         const {idRollingDoor} = req.body;
         const clientId = await getClientId(idRollingDoor);
     	console.log({id: clientId});
@@ -25,7 +24,8 @@ export const rollingdoorUp = async (req, res) => {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
             return ;
         }
-       client.setID(clientId);
+        try {
+            client.setID(clientId);
         if (!client.isOpen) {
             client.open( () => {
                 console.log("modbus open");
@@ -44,7 +44,7 @@ export const rollingdoorUp = async (req, res) => {
 
 
     } catch (error) {
-        res.status(500).json({ msg: error });
+        res.status(500).json({ msg: error,clientId:clientId,id:idRollingDoor });
     }
 };
 export const triggerAvailableBin = async (req,res) =>{
