@@ -220,7 +220,7 @@ export const step4ActivedDoor = async (req,res) => {
     const {doorStatus, name} = req.body;
 //    const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","idWaste",'clientId'],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"], where: { name: name }}] }] });
 //    res.status(200).json([container,doorStatus ? 1: 0 ]);
-    const _bin = bin.findOne({
+    const _bin = await bin.findOne({
         attributes: ['clientId'],
         
         where: {'name': name}
