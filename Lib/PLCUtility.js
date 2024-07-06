@@ -31,9 +31,9 @@ export const checkMaxWeight = async () => {
             const latest = await bin.findOne({
                 where: {id: dataBin[i].id}
             });
-            await switchLamp(latest.id, 'RED', parseFloat(latest.weight) >= parseFloat(latest.max_weight));
+            await switchLamp(latest.clientId, 'RED', parseFloat(latest.weight) >= parseFloat(latest.max_weight));
+            await new Promise((resolve)=>setTimeout(resolve,1000));
         }
-        await new Promise((resolve)=>setTimeout(resolve,1000));
     }
 }
 export const readCMD = async (address,value)=>{
