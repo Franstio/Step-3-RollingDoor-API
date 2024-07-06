@@ -6,7 +6,7 @@ import bin from '../models/BinModel.js';
  const client = new ModbusRTU();
 client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
-client.setTimeout(1000);
+client.setTimeout(300);
 export default client;
 export const switchLamp = async (id, lampType, isAlive) => {
     const dict = {
@@ -36,7 +36,7 @@ export const checkMaxWeight = async () => {
     }
 }
 export const readCMD = async (address,value)=>{
-    let res = 0;
+    let res = {data:0};
     try
     {
         res = await client.readHoldingRegisters(address,value);
@@ -44,7 +44,7 @@ export const readCMD = async (address,value)=>{
     }
     catch(err)
     {
-        await new Promise((resolve) => setTimeout(resolve,50));
+        await new Promise((resolve) => setTimeout(resolve,10));
         return await readCMD(address,value);
     }
 }
@@ -57,7 +57,7 @@ export const writeCMD = async (data)=>{
     }
     catch (err)
     {
-        await new Promise((resolve) => setTimeout(resolve,50));
+        await new Promise((resolve) => setTimeout(resolve,10));
         await writeCMD(data);
     }
 }
