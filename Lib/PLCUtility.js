@@ -27,12 +27,12 @@ export const checkMaxWeight = async () => {
     while (true) {
         const dataBin = await bin.findAll();
         for (let i = 0; i < dataBin.length; i++) {
-            console.log({ id: dataBin[i].id });
+            console.log({ id: dataBin[i].id,clientId:dataBin[i].clientId });
             const latest = await bin.findOne({
                 where: {id: dataBin[i].id}
             });
             await switchLamp(latest.clientId, 'RED', parseFloat(latest.weight) >= parseFloat(latest.max_weight));
-            await new Promise((resolve)=>setTimeout(resolve,1000));
+            await new Promise((resolve) => setTimeout(resolve,3000));
         }
     }
 }
