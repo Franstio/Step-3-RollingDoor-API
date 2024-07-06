@@ -64,7 +64,6 @@ export const triggerAvailableBin = async (req,res) =>{
     {
         res.status(200).json({msg: 'Success but no bin available'});
     }
-    console.log({availableBin: availableBin});
     for (let i=0;i<availableBin.length;i++)
     {
         console.log([parseFloat(availableBin[i].weight) , parseFloat(availableBin[i].max_weight),valueIsOpen,availableBin[i].clientId])
