@@ -49,15 +49,16 @@ export const readCMD = async (address,value)=>{
     }
 }
 export const writeCMD = async (data)=>{
+    let r = {data:0};
     try
     {
-        client.setID(data.id);
+        r = client.setID(data.id);
         await client.writeRegister(data.address,data.value);
-        return;
+        return r;
     }
     catch (err)
     {
         await new Promise((resolve) => setTimeout(resolve,100));
-        await writeCMD(data);
+        return await writeCMD(data);
     }
 }
