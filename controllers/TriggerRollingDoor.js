@@ -1,5 +1,5 @@
 //import ModbusRTU from 'modbus-serial';
-import client, { switchLamp } from '../Lib/PLCUtility.js';
+import client, { readCMD, switchLamp, writeCMD } from '../Lib/PLCUtility.js';
 import Container from "../models/ContainerModel.js"
 import waste from "../models/WesteModel.js";
 import bin from "../models/BinModel.js";
@@ -27,14 +27,8 @@ export const rollingdoorUp = async (req, res) => {
             return ;
         }
         try {
-            client.setID(clientId);
-        if (!client.isOpen) {
-            client.open( () => {
-                console.log("modbus open");
-           });
-        }
-        const log = await client.writeRegister(address,value);
-        const data = await client.readHoldingRegisters(address, 8);
+        const log = await writeCMD({id:clientId,address:address,value:value});
+        const data = await readCMD(address, 8);
         console.log({ log: log, data: data });
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka`,client:clientId,address:address,val:value,plc_response:log });
@@ -92,9 +86,8 @@ export const rollingDoorDown = async (req, res) => {
         }
         try
         {
-       client.setID(clientId);
 //	await new Promise(resolve => setTimeout(resolve,5000));
-       const resPlc =  await client.writeRegister(address, value);
+       const resPlc =  await writeCMD({id:clientId,address:address,value: value});
 //        const data = await client.readHoldingRegisters(address, 8);
 
         res.status(200).json({ msg: `Rolling Door Ditutup `,client:clientId,address:address,val:value,plc_response:resPlc});
@@ -140,13 +133,7 @@ export const rollingdoorUpManualWeb = async (req, res) => {
         }
         try
         {
-       client.setID(clientId);
-        if (!client.isOpen) {
-            client.open( () => {
-                console.log("modbus open");
-           });
-        }
-        const log = await client.writeRegister(address,value);
+        const log = await writeCMD({id:clientId,address:address,value:value});
 //        const data = await client.readHoldingRegisters(address, 8);
 //        console.log({ log: log, data: data });
         if (value === 1) {
@@ -188,9 +175,8 @@ export const rollingDoorDownManualWeb = async (req, res) => {
         }
         try
         {
-       client.setID(clientId);
 //	await new Promise(resolve => setTimeout(resolve,5000));
-        await client.writeRegister(address, value);
+        await writeCMD({id:clientId,address:address,value: value});
 //        const data = await client.readHoldingRegisters(address, 8);
 
         if (value === 1) {
@@ -229,10 +215,9 @@ export const step4ActivedDoor = async (req,res) => {
     }
     let action = doorStatus ? 20 : 21;
     const val = 1;
-    client.setID(_bin.toJSON().clientId);
     try
     {
-    const res2 = await client.writeRegister(action,val);
+    const res2 = await writeCMD({id:_bin.toJSON().clientId,address:action,value:val});
     if (doorStatus) {
         res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val,plcres: res2});
     } else {

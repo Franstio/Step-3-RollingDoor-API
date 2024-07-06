@@ -6,7 +6,7 @@ import bin from '../models/BinModel.js';
  const client = new ModbusRTU();
 client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
 //// set timeout, if slave did not reply back
-client.setTimeout(5000);
+client.setTimeout(3000);
 export default client;
 export const switchLamp = async (id, lampType, isAlive) => {
     const dict = {
@@ -14,14 +14,13 @@ export const switchLamp = async (id, lampType, isAlive) => {
         "GREEN": 31
     };
     const address = dict[lampType];
-    client.setID(id);
+//    client.setID(id);
     try {
-        await client.writeRegister(address, isAlive ? 1 : 0);
+        await writeCMD({id:id,address:address,value: isAlive ? 1 : 0});
     }
     catch (error) {
         console.log([error, id, lampType, address, isAlive]);
     }
-    await new Promise(resolve => setTimeout(function () { return resolve(); }, 2000));
 } 
 
 export const checkMaxWeight = async () => {
@@ -34,5 +33,31 @@ export const checkMaxWeight = async () => {
             });
             await switchLamp(latest.id, 'RED', parseFloat(latest.weight) >= parseFloat(latest.max_weight));
         }
+    }
+}
+export const readCMD = async (address,value)=>{
+    let res = 0;
+    try
+    {
+        res = await client.readHoldingRegisters(address,value);
+        return res;
+    }
+    catch(err)
+    {
+        await new Promise((resolve) => setTimeout(resolve,100));
+        return await readCMD(address,value);
+    }
+}
+export const writeCMD = async (data)=>{
+    try
+    {
+        client.setID(data.id);
+        await client.writeRegister(data.address,data.value);
+        return;
+    }
+    catch (err)
+    {
+        await new Promise((resolve) => setTimeout(resolve,100));
+        await writeCMD(data);
     }
 }

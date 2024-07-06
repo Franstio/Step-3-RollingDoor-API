@@ -1,12 +1,12 @@
 import { SerialPort } from 'serialport';
 
-const Timbangan = null;/* new SerialPort({
+const Timbangan =  new SerialPort({
     path: '/dev/ttyUSB0',//Note Diubah dari 1 ke 0.
     baudRate: 9600,
     dataBits: 8,
     stopBits: 1,
     parity: 'none',
-    }); */
+    }); 
 let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
