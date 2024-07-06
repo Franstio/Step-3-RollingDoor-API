@@ -52,8 +52,8 @@ export const writeCMD = async (data)=>{
     let r = {data:0};
     try
     {
-        r = client.setID(data.id);
-        await client.writeRegister(data.address,data.value);
+        client.setID(data.id);
+        r = await client.writeRegister(data.address,data.value);
         return r;
     }
     catch (err)
