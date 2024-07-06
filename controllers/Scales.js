@@ -1,7 +1,7 @@
 import { SerialPort } from 'serialport';
 
 const Timbangan =  new SerialPort({
-    path: '/dev/ttyUSB0',//Note Diubah dari 1 ke 0.
+    path: '/dev/ttyUSB1',//Note Diubah dari 1 ke 0.
     baudRate: 9600,
     dataBits: 8,
     stopBits: 1,
