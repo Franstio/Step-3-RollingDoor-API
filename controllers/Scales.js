@@ -1,7 +1,7 @@
 import { SerialPort } from 'serialport';
 
 const Timbangan =  new SerialPort({
-    path: '/dev/ttyUSB1',//Note Diubah dari 1 ke 0.
+    path: process.env.PORT_TIMBANGAN,//Note Diubah dari 1 ke 0.
     baudRate: 9600,
     dataBits: 8,
     stopBits: 1,
@@ -10,6 +10,7 @@ const Timbangan =  new SerialPort({
 let currentWeight=0;
 let holdDelay = false;
 export const getScales50Kg =(io) => {
+	console.log("Reading Scale From Port " + process.env.PORT_TIMBANGAN);
 	if (Timbangan==null)
 		return;
     try {
@@ -28,7 +29,7 @@ export const getScales50Kg =(io) => {
         Timbangan.on('data', (rawData) => {
            // console.log('Data Timbangan:', weight50Kg.toString());
             // Kirim data yang diterima sebagai respons ke clien
-	  // console.log(rawData.toString());
+	  console.log(rawData.toString());
 	    const data = parseFloat(rawData.toString().replace("=","")).toString();
 	 // console.log(data);
 	    let res='';
