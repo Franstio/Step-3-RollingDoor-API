@@ -1,3 +1,5 @@
+import {config} from 'dotenv';
+config();
 import express from "express";
 import RollingDoorRoute from "./routes/RollingDoorRoute.js";
 import ScannerRoute from "./routes/ScannerRoute.js";
@@ -9,8 +11,6 @@ import db from "./config/db.js";
 import {getScales50Kg} from "./controllers/Scales.js";
 import bodyParser from "body-parser";
 import { checkMaxWeight } from "./Lib/PLCUtility.js";
-import {config} from 'dotenv';
-config();
 const app = express();
 const server = http.createServer(app);
 
