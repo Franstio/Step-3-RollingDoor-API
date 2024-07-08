@@ -6,14 +6,22 @@ import bin from "../models/BinModel.js";
 import { where } from 'sequelize';
 
 const getClientId =  async (rollingDoorId)=>{
+    try
+    {
     const sBin = await bin.findOne({
         where: {id: rollingDoorId}
     });
-    if (!sBin )
+        if (!sBin )
+            return null;
+        if (!sBin.toJSON().clientId)
+            return null;
+        return sBin.toJSON().clientId;
+    }
+    catch(err)
+    {
+        console.log(rollingDoorId);
         return null;
-    if (!sBin.toJSON().clientId)
-        return null;
-    return sBin.toJSON().clientId;
+    }
 }
 export const rollingdoorUp = async (req, res) => {
         const {idRollingDoor} = req.body;
