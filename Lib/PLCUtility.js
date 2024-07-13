@@ -49,7 +49,7 @@ export const readCMD = async (address,value)=>{
     }
 }
 export const writeCMD = async (data)=>{
-    let r = {data:0};
+    let r = {data:[0]};
     try
     {
         client.setID(data.id);
