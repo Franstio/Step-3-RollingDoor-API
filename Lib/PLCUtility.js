@@ -28,11 +28,14 @@ export const checkMaxWeight = async () => {
         const dataBin = await bin.findAll();
         for (let i = 0; i < dataBin.length; i++) {
             console.log({ id: dataBin[i].id,clientId:dataBin[i].clientId });
-            const latest = await bin.findOne({
+            /*const latest = await bin.findOne({
                 where: {id: dataBin[i].id}
-            });
-            await switchLamp(latest.clientId, 'RED', parseFloat(latest.weight) >= parseFloat(latest.max_weight));
+            });*/
+            const maxWeight =  parseFloat(dataBin[i].max_weight) * 0.95;
+
+            await switchLamp(latest.clientId, 'RED', parseFloat(dataBin[i].weight) >= maxWeight);
         }
+        await new Promise((resolve)=>setTimeout(resolve,5000));
     }
 }
 export const readCMD = async (address,value)=>{
