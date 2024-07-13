@@ -33,7 +33,7 @@ export const checkMaxWeight = async () => {
             });*/
             const maxWeight =  parseFloat(dataBin[i].max_weight) * 0.95;
 
-            await switchLamp(latest.clientId, 'RED', parseFloat(dataBin[i].weight) >= maxWeight);
+            await switchLamp(dataBin[i].clientId, 'RED', parseFloat(dataBin[i].weight) >= maxWeight);
         }
         await new Promise((resolve)=>setTimeout(resolve,5000));
     }
