@@ -19,14 +19,12 @@ const getClientId =  async (rollingDoorId)=>{
     }
     catch(err)
     {
-        console.log(rollingDoorId);
         return null;
     }
 }
 export const rollingdoorUp = async (req, res) => {
         const {idRollingDoor} = req.body;
         const clientId = await getClientId(idRollingDoor);
-    	console.log({id: clientId});
         const address = 20;
         const value = 1;
         if (clientId==null)
@@ -37,7 +35,6 @@ export const rollingdoorUp = async (req, res) => {
         try {
         const log = await writeCMD({id:clientId,address:address,value:value});
         const data = await readCMD(address, 8);
-        console.log({ log: log, data: data });
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka`,client:clientId,address:address,val:value,plc_response:log });
         } else {
@@ -87,7 +84,6 @@ export const rollingDoorDown = async (req, res) => {
         const {idRollingDoor} = req.body;
 
         const clientId = await getClientId(idRollingDoor);
-    	console.log({id: clientId});
         if (clientId==null)
         {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
@@ -118,7 +114,6 @@ export const rollingDoorDown = async (req, res) => {
 
 export const switchLampAPI = async (req,res) => {
     const {id,lamp,value} = req.query;
-    console.log([id,lamp,value,value ? 1 : 0]);
     await switchLamp(id,lamp,value=='1');
     res.status(200).json({msg:"ok"});
 }
@@ -134,7 +129,6 @@ export const rollingdoorUpManualWeb = async (req, res) => {
         const address = 20;
         const value = 1;
         const clientId = await getClientId(idRollingDoor);
-    	console.log({id: clientId});
         if (clientId==null)
         {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
@@ -144,7 +138,6 @@ export const rollingdoorUpManualWeb = async (req, res) => {
         {
         const log = await writeCMD({id:clientId,address:address,value:value});
 //        const data = await client.readHoldingRegisters(address, 8);
-//        console.log({ log: log, data: data });
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka` });
         } else {
@@ -176,7 +169,6 @@ export const rollingDoorDownManualWeb = async (req, res) => {
         }
 
         const clientId = await getClientId(idRollingDoor);
-    	console.log({id: clientId});
         if (clientId==null)
         {
             res.status(500).json({err:"bin not found",id:idRollingDoor});
@@ -245,7 +237,6 @@ export const step4ActivedDoor = async (req,res) => {
         }
         else
         {
-        console.log(err);
         res.status(500).json({err:err,clientId:_bin.toJSON().clientId,address:action,value:val});
         }
     }

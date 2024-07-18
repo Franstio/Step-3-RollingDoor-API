@@ -7,7 +7,6 @@ import moment from 'moment';
 //import { switchLamp } from "../Lib/PLCUtility.js";
 
 export const ScanBadgeid = async (req, res) => {
-    console.log(req.body);
     const { badgeId } = req.body;
     try {
         const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId } });
@@ -24,7 +23,6 @@ export const ScanBadgeid = async (req, res) => {
 
 export const ScanContainer = async (req, res) => {
     const { containerId } = req.body;
-    console.log(containerId)
     try {
         const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
         if (container) {
@@ -40,7 +38,6 @@ export const ScanContainer = async (req, res) => {
 export const SaveTransaksi = async (req,res) => {
     const {payload} = req.body;
     payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
-    console.log(payload);
     (await transaction.create(payload)).save();
     res.status(200).json({msg:'ok'});
 }
@@ -79,7 +76,6 @@ export const CheckBinCapacity = async (req, res) => {
 
         // Mengurutkan tempat sampah berdasarkan kapasitas yang hendak penuh terlebih dahulu
         eligibleBins = eligibleBins.sort((a, b) =>  (parseFloat(a.max_weight) - (parseFloat(a.weight) + parseFloat(neto))) -    (parseFloat(b.max_weight) - (parseFloat(b.weight) + parseFloat(neto))));
-        console.log(eligibleBins);
         // Memilih tempat sampah yang hendak penuh
         let selectedBin = eligibleBins[0];
         let remainingNeto = neto;

@@ -19,7 +19,6 @@ export const switchLamp = async (id, lampType, isAlive) => {
         await writeCMD({id:id,address:address,value: isAlive ? 1 : 0});
     }
     catch (error) {
-        console.log([error, id, lampType, address, isAlive]);
     }
 } 
 
@@ -27,7 +26,6 @@ export const checkMaxWeight = async () => {
     while (true) {
         const dataBin = await bin.findAll();
         for (let i = 0; i < dataBin.length; i++) {
-            console.log({ id: dataBin[i].id,clientId:dataBin[i].clientId });
             /*const latest = await bin.findOne({
                 where: {id: dataBin[i].id}
             });*/
