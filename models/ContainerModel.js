@@ -15,6 +15,9 @@ const container = db.define('container', {
     },
     weightbin:{
         type: DataTypes.DECIMAL
+    },
+    step2value:{
+        type: DataTypes.DECIMAL
     }
 }, {
     freezeTableName: true,

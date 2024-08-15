@@ -24,7 +24,7 @@ export const ScanBadgeid = async (req, res) => {
 export const ScanContainer = async (req, res) => {
     const { containerId } = req.body;
     try {
-        const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
+        const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","step2value","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
         if (container) {
             res.json({ container:container });
         } else {
@@ -105,3 +105,15 @@ export const CheckBinCapacity = async (req, res) => {
     }
 };
 
+export const UpdateStep2Value = async (req,res)=>{
+    const {value} = req.body;
+    const {containerName} = req.params;
+    const _container = await Container.findOne({where:{
+        name: containerName
+    }});
+    if (!_container)
+        return res.status(404).json('Container Not Found');
+    _container.dataValues.step2value = parseFloat(value);
+    _container.save();
+    return res.status(200).json({msg:'ok'});
+}
