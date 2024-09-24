@@ -3,13 +3,12 @@ import bin from '../models/BinModel.js';
 import {config} from 'dotenv';
 config();
 
-client = new ModbusRTU();
+const client = new ModbusRTU();
 client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 });
 console.log("PLC PORT: "+ process.env.PORT_PLC);
 
 //// set timeout, if slave did not reply back
 client.setTimeout(100);
- const client = getClient();
 export default client;
 export const switchLamp = async (id, lampType, isAlive) => {
     const dict = {
