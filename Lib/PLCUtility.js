@@ -2,13 +2,16 @@ import ModbusRTU from 'modbus-serial';
 import bin from '../models/BinModel.js';
 
 
-
- const client = new ModbusRTU();
-client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 });
+const getClient=  ()=>{
+    const _client = new ModbusRTU();
+_client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 });
 console.log("PLC PORT: "+ process.env.PORT_PLC);
 
 //// set timeout, if slave did not reply back
-client.setTimeout(100);
+_client.setTimeout(100);
+return _client;
+}
+ const client = getClient();
 export default client;
 export const switchLamp = async (id, lampType, isAlive) => {
     const dict = {
