@@ -4,7 +4,9 @@ import bin from '../models/BinModel.js';
 
 
  const client = new ModbusRTU();
-client.connectRTU("/dev/ttyUSB0", { baudRate: 9600 });
+client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 });
+console.log("PLC PORT: "+ process.env.PORT_PLC);
+
 //// set timeout, if slave did not reply back
 client.setTimeout(100);
 export default client;

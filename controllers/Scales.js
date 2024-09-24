@@ -11,8 +11,12 @@ export const getScales50Kg = (io) => {
 		stopBits: 1,
 		parity: 'none',
 	});
+	console.log("Timbangan PORT: "+ process.env.PORT_TIMBANGAN);
 	if (Timbangan == null)
-		return;
+	{
+		getScales50Kg(io);
+		return
+	}
 	try {
 		let response;
 		setInterval(function () {
