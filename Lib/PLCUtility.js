@@ -1,6 +1,7 @@
 import ModbusRTU from 'modbus-serial';
 import bin from '../models/BinModel.js';
-
+import {config} from 'dotenv';
+config();
 
 const getClient=  ()=>{
     const _client = new ModbusRTU();
