@@ -66,7 +66,7 @@ export const writeCMD = async (data)=>{
         if (check== 'Timed out' || check == 'CRC error')
         {
             await new Promise((resolve) => setTimeout(resolve,100));
-            await writeCmd(data);
+            await writeCMD(data);
         }
     }
     
