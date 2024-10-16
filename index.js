@@ -19,7 +19,7 @@ try {
   console.log('Database terhubung..');
   
 } catch (error) {
-  console.error(error);
+  console.log(error);
   
 }
 
