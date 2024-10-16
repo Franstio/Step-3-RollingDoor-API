@@ -23,7 +23,7 @@ const getClientId =  async (rollingDoorId)=>{
     }
 }
 export const ToggleRollingDoor  = async (id,openDoor)=>{
-    const address  =openDoor  ?20 : 1;
+    const address  =openDoor  ?20 : 21;
     const value = 1;
     await writeCMD({id:id,address:address,value:value}); 
 }
