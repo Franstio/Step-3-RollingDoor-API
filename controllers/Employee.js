@@ -16,7 +16,7 @@ export const ScanBadgeid = async (req, res) => {
             res.json({ error: 'Badge ID not found' });
         }
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(500).json({ msg: 'Terjadi kesalahan server'  });
     }
 };
@@ -31,15 +31,16 @@ export const ScanContainer = async (req, res) => {
             res.json({ error: 'Container ID not found' });
         }
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(500).json({ msg: 'Terjadi kesalahan server' });
     }
 };
 export const SaveTransaksi = async (req,res) => {
     const {payload} = req.body;
     payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
-    (await transaction.create(payload)).save();
-    res.status(200).json({msg:'ok'});
+    let state = await transaction.create(payload);
+    state = await state.save();
+    res.status(200).json({msg:state});
 }
 export const UpdateBinWeight = async (req,res) =>{
     const {binId,neto} = req.body;
@@ -100,7 +101,7 @@ export const CheckBinCapacity = async (req, res) => {
 
         res.status(200).json({ success: true, bin: selectedBin });
     } catch (error) {
-        console.error('Error checking bin capacity:', error);
+        console.log('Error checking bin capacity:', error);
         res.status(500).json({ success: false, message: 'Internal Server Error' });
     }
 };
