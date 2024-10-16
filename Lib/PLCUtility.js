@@ -59,9 +59,18 @@ export const writeCMD = async (data)=>{
         r = await client.writeRegister(data.address,data.value);
         return r;
     }
-    catch (err)
+    catch(err)
     {
-        await new Promise((resolve) => setTimeout(resolve,1));
-        return await writeCMD(data);
+        const check =err.message || err;
+        console.log(err.message || err);
+        if (check== 'Timed out' || check == 'CRC error')
+        {
+            await new Promise((resolve) => setTimeout(resolve,100));
+            await writeCmd(data);
+        }
+    }
+    
+    finally {
+        await new Promise((resolve)=>setTimeout(resolve,10));
     }
 }

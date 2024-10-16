@@ -22,6 +22,12 @@ const getClientId =  async (rollingDoorId)=>{
         return null;
     }
 }
+export const ToggleRollingDoor  = async (id,openDoor)=>{
+    const address  =openDoor  ?20 : 1;
+    const value = 1;
+    await writeCMD({id:id,address:address,value:value}); 
+}
+
 export const rollingdoorUp = async (req, res) => {
         const {idRollingDoor} = req.body;
         const clientId = await getClientId(idRollingDoor);

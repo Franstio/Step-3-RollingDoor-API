@@ -4,6 +4,7 @@ import waste from "../models/WesteModel.js";
 import transaction from "../models/TransactionModel.js"
 import bin from "../models/BinModel.js";
 import moment from 'moment';
+import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 
 export const ScanBadgeid = async (req, res) => {
@@ -47,6 +48,7 @@ export const UpdateBinWeight = async (req,res) =>{
     const data = await bin.findOne({where: {id:binId}});
     data.weight = parseFloat(neto) + parseFloat(data.weight);
     data.save();
+    await ToggleRollingDoor(binId,false);
    // await switchLamp(data.id,"RED",data.weight >= parseFloat(data.max_weight))
     res.status(200).json({msg:'ok'});
 }
@@ -98,7 +100,8 @@ export const CheckBinCapacity = async (req, res) => {
         if (eligibleBins.length < 1) {
             return res.status(200).json({ success: false, message: 'Not enough capacity in any bins' });
         }
-
+        console.log(selectedBin.clientId);
+        await ToggleRollingDoor(selectedBin.clientId,true);
         res.status(200).json({ success: true, bin: selectedBin });
     } catch (error) {
         console.log('Error checking bin capacity:', error);
