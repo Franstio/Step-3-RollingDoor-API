@@ -99,7 +99,7 @@ export const SyncTransaction = async ()=>{
 export const SyncAPI =async (req,res) =>
 {
     const data = await SyncTransaction();
-    return res.json({msg:pending});
+    return res.json({msg:data});
 }
 export const CheckBinCapacity = async (req, res) => {
     const { type_waste, neto } = req.body;
