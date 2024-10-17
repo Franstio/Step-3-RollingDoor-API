@@ -10,7 +10,7 @@ import axios from 'axios';
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
     withCredentials: false,
-    timeout: 5000,
+    timeout: 1000,
 });
 export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
@@ -69,30 +69,33 @@ export const SyncTransaction = async ()=>{
     {
         try
         {
-        const response = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogTempbyPc`, {
-            badgeno: pending[i].badgeId,
-            stationname: "STEP 3 COLLECTION",
-            frombin: pending[i].containerName,//"2-PCS-5",
-            weight: pending[i].neto,
-            activity: 'Movement by System',
-            filename: null,
-            postby: "Local Step 3"
+            const response = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogTempbyPc`, {
+                badgeno: pending[i].badgeId,
+                stationname: "STEP 3 COLLECTION",
+                frombin: pending[i].containerName,//"2-PCS-5",
+                weight: pending[i].neto,
+                activity: 'Movement by System',
+                filename: null,
+                postby: "Local Step 3"
 
-        });
-        const response2 = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogbypc`, {
-            stationname: "STEP 3 COLLECTION",
-            frombin: pending[i].containerName,
-            tobin: pending[i].binName ,
-        });
-        pending[i].status  ='Done';
-        pending[i].isSuccess = true;
-        console.log([pending[i],[response.status,response.data],[response2.status,response2.data]]);
-        await db.query(`Update transaction set status='Done',isSuccess=1 where id='${pending[i].id || pending[i].Id}' `);
+            });
+            const response2 = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogbypc`, {
+                stationname: "STEP 3 COLLECTION",
+                frombin: pending[i].containerName,
+                tobin: pending[i].binName ,
+            });
+            pending[i].status  ='Done';
+            pending[i].isSuccess = true;
+            console.log([pending[i],[response.status,response.data],[response2.status,response2.data]]);
         }
         catch(err)
         {
-            console.log(err?.data|| 'ERROR');
+            pending[i].status  = 'Pending|PIDSG';
+            pending[i].isSuccess = false;
+            console.log(err?.message|| 'ERROR');
         }
+        
+        await db.query(`Update transaction set status='${pending[i].status}',isSuccess='${pending[i].isSuccess}' where id='${pending[i].id || pending[i].Id}' `);
     }
     return pending;
 }
