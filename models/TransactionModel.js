@@ -38,6 +38,12 @@ const transaction = db.define('transaction', {
    },
    binId: {
     type: DataTypes.INTEGER
+   },
+   status:{
+    type:DataTypes.STRING,
+   },
+   isSuccess: {
+    type: DataTypes.BOOLEAN
    }
 }, {
     freezeTableName: true,

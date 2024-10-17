@@ -5,8 +5,13 @@ import transaction from "../models/TransactionModel.js"
 import bin from "../models/BinModel.js";
 import moment from 'moment';
 import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
+import db from "../config/db.js";   
+import axios from 'axios';
 //import { switchLamp } from "../Lib/PLCUtility.js";
-
+const apiClient = axios.create({
+    withCredentials: false,
+    timeout: 5000,
+});
 export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
     try {
@@ -52,7 +57,50 @@ export const UpdateBinWeight = async (req,res) =>{
    // await switchLamp(data.id,"RED",data.weight >= parseFloat(data.max_weight))
     res.status(200).json({msg:'ok'});
 }
+export const SyncTransaction = async ()=>{
+    const data = await db.query("Select t.id,t.status,t.isSuccess,t.containerName,t.binName,t.neto from transaction t where t.status like '%PENDING%';");
+    if (!data || data.length < 1)
+        return data;
+    const pending = data[0];
+    if (!pending || pending.length<1 )
+        return pending;
+    
+    for (let i=0;i<pending.length;i++)
+    {
+        try
+        {
+        const response = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogTempbyPc`, {
+            badgeno: pending[i].badgeId,
+            stationname: "STEP 3 COLLECTION",
+            frombin: pending[i].containerName,//"2-PCS-5",
+            weight: pending[i].neto,
+            activity: 'Movement by System',
+            filename: null,
+            postby: "Local Step 3"
 
+        });
+        const response2 = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogbypc`, {
+            stationname: "STEP 3 COLLECTION",
+            frombin: pending[i].containerName,
+            tobin: pending[i].binName ,
+        });
+        pending[i].status  ='Done';
+        pending[i].isSuccess = true;
+        console.log([pending[i],[response.status,response.data],[response2.status,response2.data]]);
+        await db.query(`Update transaction set status='Done',isSuccess=1 where id='${pending[i].id || pending[i].Id}' `);
+        }
+        catch(err)
+        {
+            console.log(err?.data|| 'ERROR');
+        }
+    }
+    return pending;
+}
+export const SyncAPI =async (req,res) =>
+{
+    const data = await SyncTransaction();
+    return res.json({msg:pending});
+}
 export const CheckBinCapacity = async (req, res) => {
     const { type_waste, neto } = req.body;
 
