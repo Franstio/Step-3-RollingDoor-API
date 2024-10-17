@@ -95,7 +95,7 @@ export const SyncTransaction = async ()=>{
             console.log(err?.message|| 'ERROR');
         }
         
-        await db.query(`Update transaction set status='${pending[i].status}',isSuccess='${pending[i].isSuccess}' where id='${pending[i].id || pending[i].Id}' `);
+        await db.query(`Update transaction set status='${pending[i].status}',isSuccess='${pending[i].isSuccess ? 1 : 0 }' where id='${pending[i].id || pending[i].Id}' `);
     }
     return pending;
 }
