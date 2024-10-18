@@ -168,7 +168,7 @@ export const UpdateStep2Value = async (req,res)=>{
     }});
     if (!_container)
         return res.status(404).json('Container Not Found');
-    _container.dataValues.step2value = parseFloat(value);
+    _container.step2value = parseFloat(value);
     await _container.save();
     return res.status(200).json({msg:'ok'});
 }
