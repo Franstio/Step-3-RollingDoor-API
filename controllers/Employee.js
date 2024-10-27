@@ -69,6 +69,10 @@ export const SyncTransaction = async ()=>{
     {
         try
         {
+            const weightResponse = await apiClient.post(`http://${process.env.REACT_APP_PIDSG}/api/pid/sendWeight`,{
+                        binname: pending[i].name,
+                        weight: pending[i].step2value
+            });
             const response = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogTempbyPc`, {
                 badgeno: pending[i].badgeId,
                 stationname: "STEP 3 COLLECTION",
@@ -86,7 +90,7 @@ export const SyncTransaction = async ()=>{
             });
             pending[i].status  ='Done';
             pending[i].isSuccess = true;
-            console.log([pending[i],[response.status,response.data],[response2.status,response2.data]]);
+            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
         }
         catch(err)
         {
@@ -161,14 +165,15 @@ export const CheckBinCapacity = async (req, res) => {
 };
 
 export const UpdateStep2Value = async (req,res)=>{
-    const {value} = req.body;
+    const {value,fromRack} = req.body;
     const {containerName} = req.params;
     const _container = await Container.findOne({where:{
         name: containerName
     }});
     if (!_container)
         return res.status(404).json('Container Not Found');
-    _container.step2value = parseFloat(value);
+
+    _container.step2value = fromRack ? parseFloat(value) : (parseFloat(value) + _container.step2value);
     await _container.save();
     return res.status(200).json({msg:'ok'});
 }
