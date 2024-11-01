@@ -116,11 +116,6 @@ export const CheckBinCapacity = async (req, res) => {
         const bins = await bin.findAll({
             where: {
                 type_waste: type_waste
-            },
-            include:{
-                foreignKey: "type_waste",
-                as: "waste",
-                model: waste
             }
         });
 

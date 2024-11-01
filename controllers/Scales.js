@@ -4,6 +4,8 @@ import { SerialPort } from 'serialport';
 let currentWeight = 0;
 let holdDelay = false;
 export const getScales50Kg = (io) => {
+	
+	try {
 	const Timbangan = new SerialPort({
 		path: process.env.PORT_TIMBANGAN,//Note Diubah dari 1 ke 0.
 		baudRate: 9600,
@@ -17,12 +19,8 @@ export const getScales50Kg = (io) => {
 		getScales50Kg(io);
 		return
 	}
-	try {
 		let response;
-		setInterval(function () {
-			response = { weight50Kg: 20 };
-			io.emit('data', response);
-		}, 5000);
+		
 		io.on('connectScale', () => {
 			Timbangan.open(() => {
 			});
@@ -58,6 +56,8 @@ export const getScales50Kg = (io) => {
 			res.status(200).json(response);
 		}
 	} catch (error) {
+		getScales50Kg(io);
+		return;
 		//      res.status(500).json({ msg: error.message });
 	}
 };
