@@ -7,6 +7,7 @@ import moment from 'moment';
 import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
 import db from "../config/db.js";   
 import axios from 'axios';
+import { QueryTypes } from "sequelize";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
     withCredentials: false,
