@@ -11,6 +11,7 @@ import db from "./config/db.js";
 import {getScales50Kg} from "./controllers/Scales.js";
 import bodyParser from "body-parser";
 import { checkMaxWeight } from "./Lib/PLCUtility.js";
+import { syncEmployeePIDSG, SyncTransaction } from './controllers/Employee.js';
 const app = express();
 const server = http.createServer(app);
 
@@ -55,6 +56,16 @@ app.use(ScalesRoute);
 server.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });
+const doSync = async() =>{
+  await SyncTransaction();
+  setImmediate(doSync);
+}
+const doSyncEmp = async()=>{
+  await syncEmployeePIDSG();
+  setTimeout(doSyncEmp,10*10*1000);
+}
+doSync();
+doSyncEmp();
 getScales50Kg(io);
 console.log("check max weight");
 //checkMaxWeight();
