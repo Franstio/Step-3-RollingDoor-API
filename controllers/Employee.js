@@ -46,6 +46,7 @@ export const SaveTransaksi = async (req,res) => {
     payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
     let state = await transaction.create(payload);
     state = await state.save();
+    await db.query(`Update container set step2value=0 where name='${payload.containerName}';`);
     res.status(200).json({msg:state});
 }
 export const UpdateBinWeight = async (req,res) =>{
@@ -172,7 +173,7 @@ export const UpdateStep2Value = async (req,res)=>{
     }});
     if (!_container)
         return res.status(404).json('Container Not Found');
-    _container.step2value = parseFloat(value);
+    _container.step2value = parseFloat(value)+ parseFloat(_container.step2value ??0);
 //    _container.step2value = fromRack ? parseFloat(value) : (parseFloat(value) + _container.step2value);
     await _container.save();
     return res.status(200).json({msg:'ok'});
