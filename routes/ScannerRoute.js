@@ -9,5 +9,5 @@ router.post("/SaveTransaksi",SaveTransaksi);
 router.post('/UpdateBinWeight',UpdateBinWeight)
 router.post('/CheckBinCapacity',CheckBinCapacity)
 router.get('/SyncPending',SyncAPI);
-router.get('/employee-sync',syncEmployeePIDSGAPI());
+router.get('/employee-sync',syncEmployeePIDSGAPI);
 export default router;
