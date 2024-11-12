@@ -90,11 +90,25 @@ export const SyncTransaction = async ()=>{
                 postby: "Local Step 3"
 
             });
+            if (!response.data.success)
+            {
+                pending[i].status  = 'Pending|PIDSG';
+                pending[i].isSuccess = false;        
+                await db.query(`Update transaction set status='${pending[i].status}',isSuccess=${pending[i].isSuccess ? 1 : 0 } where id='${pending[i].id || pending[i].Id}' `);
+                continue;
+            }
             const response2 = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogbypc`, {
                 stationname: "STEP 3 COLLECTION",
                 frombin: pending[i].containerName,
                 tobin: pending[i].binName ,
             });
+            if (!response2.data.success)
+            {
+                pending[i].status  = 'Pending|PIDSG';
+                pending[i].isSuccess = false;
+                await db.query(`Update transaction set status='${pending[i].status}',isSuccess=${pending[i].isSuccess ? 1 : 0 } where id='${pending[i].id || pending[i].Id}' `);
+                continue;
+            }
             pending[i].status  ='Done';
             pending[i].isSuccess = true;
 //            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
