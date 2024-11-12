@@ -205,7 +205,7 @@ export const syncEmployeePIDSG = async ()=>{
                     {
                         type:QueryTypes.INSERT,
                         replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
-                    });
+                    }); 
                 }
                 else
                 {
