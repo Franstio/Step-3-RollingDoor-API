@@ -75,7 +75,7 @@ export const SyncTransaction = async ()=>{
         {
             if (rackTargets.includes(pending[i].name))
             {
-                const weightResponse = await apiClient.post(`http://${process.env.REACT_APP_PIDSG}/api/pid/sendWeight`,{
+                const weightResponse = await apiClient.post(`http://${process.env.PIDSG}/api/pid/sendWeight`,{
                             binname: pending[i].name,
                             weight: pending[i].step2value
                 });
