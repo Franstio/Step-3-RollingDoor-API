@@ -65,14 +65,19 @@ export const SyncTransaction = async ()=>{
     if (!pending || pending.length<1 )
         return pending;
     
+    const rackTargetName = process.env.RACK_TARGET_CONTAINER;
+    const rackTargets = rackTargetName.split(",");
     for (let i=0;i<pending.length;i++)
     {
         try
         {
-            const weightResponse = await apiClient.post(`http://${process.env.REACT_APP_PIDSG}/api/pid/sendWeight`,{
-                        binname: pending[i].name,
-                        weight: pending[i].step2value
-            });
+            if (rackTargets.includes(pending[i].name))
+            {
+                const weightResponse = await apiClient.post(`http://${process.env.REACT_APP_PIDSG}/api/pid/sendWeight`,{
+                            binname: pending[i].name,
+                            weight: pending[i].step2value
+                });
+            }
             const response = await apiClient.post(`http://${process.env.PIDSG}/api/pid/activityLogTempbyPc`, {
                 badgeno: pending[i].badgeId,
                 stationname: "STEP 3 COLLECTION",
@@ -90,7 +95,7 @@ export const SyncTransaction = async ()=>{
             });
             pending[i].status  ='Done';
             pending[i].isSuccess = true;
-            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
+//            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
         }
         catch(err)
         {
