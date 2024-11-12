@@ -196,21 +196,24 @@ export const syncEmployeePIDSG = async ()=>{
         const syncEmp = apiRes.data.result[0];
         for (let i=0;i<syncEmp.length;i++)
         {
-            const empRes = await db.query("Select badgeId,username from employee where badgeId=?",{type:QueryTypes.SELECT,replacements:[syncEmp[i].badgeno]});
-            if (empRes.length < 1)
+            if (syncEmp[i].OUT >= 1)
             {
-                await db.query("Insert Into employee(username,active,badgeId) values(?,1,?)",
+                const empRes = await db.query("Select badgeId,username from employee where badgeId=?",{type:QueryTypes.SELECT,replacements:[syncEmp[i].badgeno]});
+                if (empRes.length < 1)
                 {
-                    type:QueryTypes.INSERT,
-                    replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
-                });
-            }
-            else
-            {
-                await db.query("Update employee set username=? where badgeId=?",{
-                    type: QueryTypes.UPDATE,
-                    replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
-                })
+                    await db.query("Insert Into employee(username,active,badgeId) values(?,1,?)",
+                    {
+                        type:QueryTypes.INSERT,
+                        replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
+                    });
+                }
+                else
+                {
+                    await db.query("Update employee set username=? where badgeId=?",{
+                        type: QueryTypes.UPDATE,
+                        replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
+                    })
+                }
             }
         }
         return syncEmp;
