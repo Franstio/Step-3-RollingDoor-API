@@ -13,4 +13,6 @@ router.post('/triggerAvailbleBin',triggerAvailableBin);
 router.get('/switchLamp',switchLampAPI);
 router.post('/activedDoor',step4ActivedDoor);
 router.put('/step2value/:containerName',UpdateStep2Value);
+
+router.post('/step2value/:containerName',UpdateStep2Value);
 export default router;
