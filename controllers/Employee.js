@@ -238,3 +238,34 @@ export const syncEmployeePIDSG = async ()=>{
         return  er.message || er;
     }
 }
+export const syncPIDSGBin = async()=>{
+    try
+      {
+          const dataBin = await db.query(" select b.id,b.name,c.station from bin b left join container c on b.name=c.name",{
+          type: QueryTypes.SELECT
+          });
+          const binNames = dataBin.map(x=>x.name); 
+          console.log(
+            `http://${process.env.PIDSG}/api/pid/bin-sync?f1=${JSON.stringify(binNames)}`);
+          const apiRes = await axios.get(
+              `http://${process.env.PIDSG}/api/pid/bin-sync?f1=${JSON.stringify(binNames)}`);
+          const syncBin = apiRes.data.result[0];
+          for (let i=0;i<syncBin.length;i++)
+          {
+              await db.query("update bin b left join container c on b.name=c.name  set max_weight=? where b.name=? and c.station=?",{
+                      type: QueryTypes.UPDATE,
+                      replacements: [syncBin[i].capacity,syncBin[i].name,syncBin[i].station]
+                  })
+          }
+          return syncBin;
+      }
+      catch (er)
+      {
+          console.log(er);
+          return  er.message || er;
+      }
+  }
+  
+export const syncPIDSGBinAPI = async (req,res)=>{
+    return res.json(await syncPIDSGBin());
+  }
