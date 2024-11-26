@@ -8,6 +8,9 @@ const employee = db.define('employee', {
         type: DataTypes.INTEGER,
         allowNull: false
     },
+    station:{
+        type:DataTypes.STRING
+    },
     username: {
         type: DataTypes.STRING,
     }

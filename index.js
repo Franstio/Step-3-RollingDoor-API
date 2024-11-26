@@ -11,7 +11,7 @@ import db from "./config/db.js";
 import {getScales50Kg} from "./controllers/Scales.js";
 import bodyParser from "body-parser";
 import { checkMaxWeight } from "./Lib/PLCUtility.js";
-import { syncEmployeePIDSG, syncPIDSGBin, SyncTransaction } from './controllers/Employee.js';
+import { syncEmployeePIDSG, syncPIDSGBin, syncPIDSGContainer, SyncTransaction } from './controllers/Employee.js';
 const app = express();
 const server = http.createServer(app);
 
@@ -63,6 +63,7 @@ const doSync = async() =>{
 const doSyncEmp = async()=>{
   await syncEmployeePIDSG();
   await syncPIDSGBin();
+  await syncPIDSGContainer();
   setTimeout(doSyncEmp,10*10*1000);
 }
 doSync();

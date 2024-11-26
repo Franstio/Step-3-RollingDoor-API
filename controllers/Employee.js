@@ -16,7 +16,7 @@ const apiClient = axios.create({
 export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
     try {
-        const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId } });
+        const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId:badgeId,active:1 } });
         if (user) {
             res.json({ user: user });
         } else {
@@ -208,11 +208,13 @@ export const syncEmployeePIDSG = async ()=>{
         const apiRes = await apiClient.get(
             `http://${process.env.PIDSG}/api/pid/employee-sync?f1=${process.env.STATION}`);
         const syncEmp = apiRes.data.result[0];
+        const apiEmpBadgeNo= [];
         for (let i=0;i<syncEmp.length;i++)
         {
             if (syncEmp[i].OUT >= 1)
             {
                 const empRes = await db.query("Select badgeId,username from employee where badgeId=?",{type:QueryTypes.SELECT,replacements:[syncEmp[i].badgeno]});
+                apiEmpBadgeNo.push(`'${syncEmp[i].badgeno}'`);
                 if (empRes.length < 1)
                 {
                     await db.query("Insert Into employee(username,active,badgeId) values(?,1,?)",
@@ -223,13 +225,16 @@ export const syncEmployeePIDSG = async ()=>{
                 }
                 else
                 {
-                    await db.query("Update employee set username=? where badgeId=?",{
+                    await db.query("Update employee set username=?,active=1 where badgeId=?",{
                         type: QueryTypes.UPDATE,
                         replacements: [syncEmp[i].employeename,syncEmp[i].badgeno]
                     })
                 }
             }
         }
+        await db.query(`Update employee set username=?,``IN``=0,``OUT``=0,active=0 where badgeId not in (${apiEmpBadgeNo.join(",")})`,{
+            type: QueryTypes.UPDATE,
+          });
         return syncEmp;
     }
     catch (er)
@@ -264,8 +269,40 @@ export const syncPIDSGBin = async()=>{
           console.log(er);
           return  er.message || er;
       }
-  }
+}
   
 export const syncPIDSGBinAPI = async (req,res)=>{
     return res.json(await syncPIDSGBin());
+  }
+
+  export const syncPIDSGContainer = async()=>{
+    try
+      {
+          const dataBin = await db.query(" select containerid,name,station,weightbin from container",{
+          type: QueryTypes.SELECT
+          });
+          const binNames = dataBin.map(x=>x.name); 
+          console.log(
+            `http://${process.env.PIDSG}/api/pid/bin-sync?f1=${JSON.stringify(binNames)}`);
+          const apiRes = await axios.get(
+              `http://${process.env.PIDSG}/api/pid/bin-sync?f1=${JSON.stringify(binNames)}`);
+          const syncBin = apiRes.data.result[0];
+          for (let i=0;i<syncBin.length;i++)
+          {
+              await db.query("update container set weightbin=? where name=? and station=?",{
+                      type: QueryTypes.UPDATE,
+                      replacements: [syncBin[i].weight,syncBin[i].name,syncBin[i].station]
+                  })
+          }
+          return syncBin;
+      }
+      catch (er)
+      {
+          console.log(er);
+          return  er.message || er;
+      }
+}
+  
+export const syncPIDSGBinContainerAPI = async (req,res)=>{
+    return res.json(await syncPIDSGContainer());
   }
