@@ -64,10 +64,9 @@ const doSyncEmp = async()=>{
   await syncEmployeePIDSG();
   await syncPIDSGBin();
   await syncPIDSGContainer();
-  setTimeout(doSyncEmp,10*10*1000);
 }
 doSync();
-doSyncEmp();
+setInterval(doSyncEmp,60*1000);
 getScales50Kg(io);
 console.log("check max weight");
 //checkMaxWeight();

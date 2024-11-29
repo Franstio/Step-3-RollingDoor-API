@@ -232,9 +232,12 @@ export const syncEmployeePIDSG = async ()=>{
                 }
             }
         }
+        if (syncEmp.length > 0)
+        {
         await db.query("Update employee set `IN`=0,`OUT`=0,active=0 where badgeId not in ("+apiEmpBadgeNo.join(",")+")",{
             type: QueryTypes.UPDATE,
           });
+        }
         return syncEmp;
     }
     catch (er)
