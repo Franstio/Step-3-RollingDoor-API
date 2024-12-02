@@ -292,9 +292,9 @@ export const syncPIDSGBinAPI = async (req,res)=>{
           const syncBin = apiRes.data.result[0];
           for (let i=0;i<syncBin.length;i++)
           {
-              await db.query("update container set weightbin=? where name=? and station=?",{
+              await db.query("update container set weightbin=? where name=? ",{
                       type: QueryTypes.UPDATE,
-                      replacements: [syncBin[i].weight,syncBin[i].name,syncBin[i].station]
+                      replacements: [syncBin[i].weight,syncBin[i].name]
                   })
           }
           return syncBin;
