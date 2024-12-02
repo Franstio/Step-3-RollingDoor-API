@@ -260,9 +260,9 @@ export const syncPIDSGBin = async()=>{
           const syncBin = apiRes.data.result[0];
           for (let i=0;i<syncBin.length;i++)
           {
-              await db.query("update bin b left join container c on b.name=c.name  set max_weight=? where b.name=? and c.station=?",{
+              await db.query("update bin b left join container c on b.name=c.name  set max_weight=? where b.name=? ",{
                       type: QueryTypes.UPDATE,
-                      replacements: [syncBin[i].capacity,syncBin[i].name,syncBin[i].station]
+                      replacements: [syncBin[i].capacity,syncBin[i].name]
                   })
           }
           return syncBin;
