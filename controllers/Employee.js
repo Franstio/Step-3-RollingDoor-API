@@ -60,7 +60,7 @@ export const UpdateBinWeight = async (req,res) =>{
     res.status(200).json({msg:'ok'});
 }
 export const SyncTransaction = async ()=>{
-    const data = await db.query("Select t.id,t.status,t.isSuccess,t.containerName,t.binName,t.neto from transaction t where t.status like '%PENDING%';");
+    const data = await db.query("Select t.id,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
     if (!data || data.length < 1)
         return data;
     const pending = data[0];
@@ -84,7 +84,7 @@ export const SyncTransaction = async ()=>{
                 badgeno: pending[i].badgeId,
                 stationname: "STEP 3 COLLECTION",
                 frombin: pending[i].containerName,//"2-PCS-5",
-                weight: pending[i].neto,
+                weight: parseFloat(pending[i].neto) + parseFloat(pending[i].weightbin),
                 activity: 'Movement by System',
                 filename: null,
                 postby: "Local Step 3"
