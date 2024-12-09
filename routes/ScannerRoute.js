@@ -1,5 +1,5 @@
 import express from "express";
-import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI} from "../controllers/Employee.js"
+import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI, syncAll} from "../controllers/Employee.js"
 
 const router = express.Router();
 
@@ -12,4 +12,5 @@ router.get('/SyncPending',SyncAPI);
 router.get('/employee-sync',syncEmployeePIDSGAPI);
 router.get('/bin-sync',syncPIDSGBinAPI);
 router.get('/container-sync',syncPIDSGBinContainerAPI);
+router.get('/sync-all',syncAll);
 export default router;

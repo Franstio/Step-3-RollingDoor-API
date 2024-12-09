@@ -56,17 +56,6 @@ app.use(ScalesRoute);
 server.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });
-const doSync = async() =>{
-  await SyncTransaction();
-  setImmediate(doSync);
-}
-const doSyncEmp = async()=>{
-  await syncEmployeePIDSG();
-  await syncPIDSGBin();
-  await syncPIDSGContainer();
-}
-doSync();
-setInterval(doSyncEmp,60*1000);
 getScales50Kg(io);
 console.log("check max weight");
 //checkMaxWeight();
