@@ -78,7 +78,12 @@ const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/queues');
 const bullBoard = createBullBoard({
   queues: [new BullAdapter(scaleQueue),new BullAdapter(plcQueue),new BullAdapter(pendingQueue),new BullAdapter(employeeQueue),new BullAdapter(weightbinQueue)],
-  serverAdapter: serverAdapter
+  serverAdapter: serverAdapter,
+  options:{
+    uiConfig:{
+      boardTitle:"Step 3 Task Queues"
+    }
+  }
 });
 app.use('/queues',serverAdapter.getRouter());
 export { Server, io,scaleQueue,employeeQueue,weightbinQueue,pendingQueue,plcQueue };
