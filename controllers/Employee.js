@@ -48,13 +48,7 @@ export const SaveTransaksi = async (req,res) => {
     let state = await transaction.create(payload);
     state = await state.save();
     await db.query(`Update container set step2value=0 where name='${payload.containerName}';`);
-    setTimeout(() => {
-        
-   SyncTransaction();
-   syncEmployeePIDSG();
-   syncPIDSGBin();
-   syncPIDSGContainer();
-    }, 100);
+    
     res.status(200).json({msg:state});
 }
 export const UpdateBinWeight = async (req,res) =>{
