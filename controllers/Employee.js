@@ -8,7 +8,7 @@ import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
 import db from "../config/db.js";   
 import axios from 'axios';
 import { QueryTypes } from "sequelize";
-import { employeeQueue } from "../index.js";
+import { employeeQueue, pendingQueue, weightbinQueue } from "../index.js";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
     withCredentials: false,
@@ -39,6 +39,7 @@ export const ScanBadgeid = async (req, res) => {
 export const ScanContainer = async (req, res) => {
     const { containerId } = req.body;
     try {
+        weightbinQueue.add({id:2});
         const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","step2value","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
         if (container) {
             res.json({ container:container });
@@ -56,7 +57,7 @@ export const SaveTransaksi = async (req,res) => {
     let state = await transaction.create(payload);
     state = await state.save();
     await db.query(`Update container set step2value=0 where name='${payload.containerName}';`);
-    
+    pendingQueue.add({id:3});
     res.status(200).json({msg:state});
 }
 export const UpdateBinWeight = async (req,res) =>{
