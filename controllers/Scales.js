@@ -1,9 +1,9 @@
 import { SerialPort } from 'serialport';
+import { io,  scaleQueue } from '../index.js';
+import { delay } from 'ethernet-ip/src/utilities/index.js';
 
 
-let currentWeight = 0;
-let holdDelay = false;
-export const getScales50Kg = (io) => {
+export const getScales50Kg = () => {
 	
 	try {
 	const Timbangan = new SerialPort({
@@ -13,18 +13,9 @@ export const getScales50Kg = (io) => {
 		stopBits: 1,
 		parity: 'none',
 	});
-	console.log("Timbangan PORT: "+ process.env.PORT_TIMBANGAN);
-	if (Timbangan == null)
-	{
-		getScales50Kg(io);
-		return
-	}
-		let response;
-		
-		io.on('connectScale', () => {
-			Timbangan.open(() => {
-			});
-		});
+//	console.log("Timbangan PORT: "+ process.env.PORT_TIMBANGAN);
+
+		Timbangan.open();
 		Timbangan.on('data', (rawData) => {
 			// Kirim data yang diterima sebagai respons ke clien
 			try {
@@ -38,27 +29,35 @@ export const getScales50Kg = (io) => {
 				//            if ( Math.abs(currentWeight - parsed) < 0.5)
 				//		return;
 				currentWeight = val;
-				response = { weight50Kg: val.toString() };
+				const response = { weight50Kg: val.toString() };
 				io.emit('data', response);
 			}
 			catch (err) {
+				console.log('1');
+	//	console.log(err);
+				Timbangan.close(()=>
+				scaleQueue.add({type:'scale'},{
+					delay: 3000
+				}));
+				return;
 			}
 		});
 
 		Timbangan.on('error', (error) => {
-			console.log({kg50error:error});
-			Timbangan.close();
-			getScales50Kg(io);
-			return;
+		//	console.log({kg50error:error});
+
+			console.log(error.message);		
+			Timbangan.close(()=>
+			scaleQueue.add({type:'scale'},{
+				delay: 3000
+			}));
 		});
 
-		if (response != undefined && response != null) {
-			res.status(200).json(response);
-		}
 	} catch (error) {
-		getScales50Kg(io);
-		return;
-		//      res.status(500).json({ msg: error.message });
+		console.log('3');
+		scaleQueue.add({type:'scale'},{
+			delay: 3000
+		});
 	}
 };
 

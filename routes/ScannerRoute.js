@@ -1,6 +1,6 @@
 import express from "express";
 import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI, syncAll} from "../controllers/Employee.js"
-
+import { plcQueue,pendingQueue,weightbinQueue,employeeQueue,scaleQueue } from "../index.js";
 const router = express.Router();
 
 router.post('/ScanBadgeid', ScanBadgeid);
@@ -13,4 +13,17 @@ router.get('/employee-sync',syncEmployeePIDSGAPI);
 router.get('/bin-sync',syncPIDSGBinAPI);
 router.get('/container-sync',syncPIDSGBinContainerAPI);
 router.get('/sync-all',syncAll);
+router.get('/clean',(req,res)=>{
+    plcQueue.obliterate({force:true});
+    scaleQueue.obliterate({force:true});
+    pendingQueue.obliterate({force:true});
+    employeeQueue.obliterate({force:true});
+    weightbinQueue.obliterate({force:true});
+    return res.json({msg:"ok"},200);
+});
+router.get('/start-work',(req,res)=>{
+    scaleQueue.add({type:'scale'});
+    plcQueue.add({type:'plc'});
+    return res.json({msg:'ok'},200);
+})
 export default router;

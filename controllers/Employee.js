@@ -8,6 +8,7 @@ import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
 import db from "../config/db.js";   
 import axios from 'axios';
 import { QueryTypes } from "sequelize";
+import { employeeQueue } from "../index.js";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
     withCredentials: false,
@@ -17,6 +18,13 @@ export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
     try {
         const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId:badgeId,active:1 } });
+        employeeQueue.add({id:1},{
+            attempts: 3,
+            backoff:{
+                type:'fixed',
+                delay: 1000
+            }
+        });
         if (user) {
             res.json({ user: user });
         } else {
