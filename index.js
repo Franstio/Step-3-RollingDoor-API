@@ -102,6 +102,9 @@ app.use(ScalesRoute);
 }); 
 
 server.listen(port, () => {
+  pendingQueue.add({id:1});
+  employeeQueue.add({id:2});
+  weightbinQueue.add({id:3});
   scaleQueue.add({type:'scale'});
   plcQueue.add({type:'plc'});
   console.log(`Server up and running on port ${port}`);
