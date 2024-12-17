@@ -29,7 +29,7 @@ export const getScales50Kg = () => {
 					val = val * -1;
 				//            if ( Math.abs(currentWeight - parsed) < 0.5)
 				//		return;
-				currentWeight = val;
+				//currentWeight = val;
 				const response = { weight50Kg: val.toString() };
 				io.emit('data', response);
 			}
