@@ -9,6 +9,7 @@ export const getScales50Kg = () => {
 	const Timbangan = new SerialPort({
 		path: process.env.PORT_TIMBANGAN,//Note Diubah dari 1 ke 0.
 		baudRate: 9600,
+		lock:false,
 		dataBits: 8,
 		stopBits: 1,
 		parity: 'none',
