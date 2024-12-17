@@ -35,7 +35,7 @@ export const getScales50Kg = () => {
 			}
 			catch (err) {
 				console.log('1');
-	//	console.log(err);
+				console.log(err);
 				Timbangan.close(()=>
 				scaleQueue.add({type:'scale'},{
 					delay: 3000
