@@ -58,13 +58,13 @@ export const writePLC = async (data)=>{
 
         client.setID(data.id);
         r = await client.writeRegister(data.address,data.value);
-        return r;
+        return JSON.stringify(r);
     }
     catch(err)
     {
         const check =err.message || err;
         console.log(err.message || err);
-//        plcCommandQueue.add(data);
+        plcCommandQueue.add(data,{delay: 500});
         return check;
     }
 }
