@@ -48,7 +48,7 @@ const [plcQueue,scaleQueue,pendingQueue,employeeQueue,weightbinQueue]
 
 plcQueue.process(  (job,done)=>{
     client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 }).then(x=>
-      client.setTimeout(100)).catch(er=>{
+      client.setTimeout(1000)).catch(er=>{
         console.log('plc error');
         plcQueue.add({type:'plc'},{delay:3000});
       }
