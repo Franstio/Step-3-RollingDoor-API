@@ -1,6 +1,7 @@
 import ModbusRTU from 'modbus-serial';
 import bin from '../models/BinModel.js';
 import { config } from 'dotenv';
+import { plcCommandQueue } from '../index.js';
 config();
 
 const  client = new ModbusRTU();
@@ -15,7 +16,7 @@ export const switchLamp = async (id, lampType, isAlive) => {
     const address = dict[lampType];
 //    client.setID(id);
     try {
-        await writeCMD({id:id,address:address,value: isAlive ? 1 : 0});
+        writeCMD({id:id,address:address,value: isAlive ? 1 : 0});
     }
     catch (error) {
     }
@@ -48,7 +49,7 @@ export const readCMD = async (address,value)=>{
         return await readCMD(address,value);
     }
 }
-export const writeCMD = async (data)=>{
+export const writePLC = async (data)=>{
     let r = {data:[0]};
     try
     {
@@ -60,14 +61,11 @@ export const writeCMD = async (data)=>{
     {
         const check =err.message || err;
         console.log(err.message || err);
-        if (check== 'Timed out' || check == 'CRC error')
-        {
-            await new Promise((resolve) => setTimeout(resolve,100));
-            await writeCMD(data);
-        }
+        plcCommandQueue.add(data);
+        return check;
     }
+}
+export const writeCMD = (data)=>{
     
-    finally {
-        await new Promise((resolve)=>setTimeout(resolve,10));
-    }
+    plcCommandQueue.add(data,{priority: 1});
 }

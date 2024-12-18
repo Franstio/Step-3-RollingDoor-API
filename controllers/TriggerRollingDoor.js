@@ -25,7 +25,7 @@ const getClientId =  async (rollingDoorId)=>{
 export const ToggleRollingDoor  = async (id,openDoor)=>{
     const address  =openDoor  ?20 : 21;
     const value = 1;
-    await writeCMD({id:id,address:address,value:value}); 
+    writeCMD({id:id,address:address,value:value}); 
 }
 
 export const rollingdoorUp = async (req, res) => {
@@ -39,10 +39,10 @@ export const rollingdoorUp = async (req, res) => {
             return ;
         }
         try {
-        const log = await writeCMD({id:clientId,address:address,value:value});
+        writeCMD({id:clientId,address:address,value:value});
         const data = await readCMD(address, 8);
         if (value === 1) {
-            res.status(200).json({ msg: `Rolling Door Buka`,client:clientId,address:address,val:value,plc_response:log });
+            res.status(200).json({ msg: `Rolling Door Buka`,client:clientId,address:address,val:value});
         } else {
             res.status(200).json({ msg: `Kunci dengan address ${address} berhasil ditutup.` });
         }
@@ -98,10 +98,10 @@ export const rollingDoorDown = async (req, res) => {
         try
         {
 //	await new Promise(resolve => setTimeout(resolve,5000));
-       const resPlc =  await writeCMD({id:clientId,address:address,value: value});
+       writeCMD({id:clientId,address:address,value: value});
 //        const data = await client.readHoldingRegisters(address, 8);
 
-        res.status(200).json({ msg: `Rolling Door Ditutup `,client:clientId,address:address,val:value,plc_response:resPlc});
+        res.status(200).json({ msg: `Rolling Door Ditutup `,client:clientId,address:address,val:value});
         return;
     } catch (error) {
         if (error.name=="TransactionTimedOutError")
@@ -142,7 +142,7 @@ export const rollingdoorUpManualWeb = async (req, res) => {
         }
         try
         {
-        const log = await writeCMD({id:clientId,address:address,value:value});
+         writeCMD({id:clientId,address:address,value:value});
 //        const data = await client.readHoldingRegisters(address, 8);
         if (value === 1) {
             res.status(200).json({ msg: `Rolling Door Buka` });
@@ -183,7 +183,7 @@ export const rollingDoorDownManualWeb = async (req, res) => {
         try
         {
 //	await new Promise(resolve => setTimeout(resolve,5000));
-        await writeCMD({id:clientId,address:address,value: value});
+        writeCMD({id:clientId,address:address,value: value});
 //        const data = await client.readHoldingRegisters(address, 8);
 
         if (value === 1) {
@@ -224,11 +224,11 @@ export const step4ActivedDoor = async (req,res) => {
     const val = 1;
     try
     {
-    const res2 = await writeCMD({id:_bin.toJSON().clientId,address:action,value:val});
+        writeCMD({id:_bin.toJSON().clientId,address:action,value:val});
     if (doorStatus) {
-        res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val,plcres: res2});
+        res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val});
     } else {
-        res.status(200).json({ msg: `Rolling Door Tutup`,clientId:_bin.toJSON().clientId,address:action,value:val,plcres: res2 });
+        res.status(200).json({ msg: `Rolling Door Tutup`,clientId:_bin.toJSON().clientId,address:action,value:val });
     }
     }
     catch(err)

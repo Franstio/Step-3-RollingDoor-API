@@ -10,7 +10,7 @@ import { Server } from "socket.io";
 import db from "./config/db.js";
 import bodyParser from "body-parser";
 import { syncEmployeePIDSG, syncPIDSGBin, syncPIDSGContainer, SyncTransaction } from './controllers/Employee.js';
-import client from './Lib/PLCUtility.js';
+import client, { writePLC } from './Lib/PLCUtility.js';
 import { getScales50Kg } from './controllers/Scales.js';
 import Queue from 'bull';
 import { ExpressAdapter } from '@bull-board/express';
@@ -42,9 +42,13 @@ const io = new Server(server, {
   }
 });
 
-const [plcQueue,scaleQueue,pendingQueue,employeeQueue,weightbinQueue]
- = [Queue('plcQueue',{limiter:{max:3,duration:1000}}),Queue('scaleQueue',{limiter:{max:3,duration:1000}}),Queue('pending'),Queue('employee'),Queue('weightbin')];
+const [plcCommandQueue,plcQueue,scaleQueue,pendingQueue,employeeQueue,weightbinQueue]
+ = [Queue('PLC Command Queue'),Queue('PLC Connection Queue',{limiter:{max:3,duration:1000}}),Queue('Scale Queue',{limiter:{max:3,duration:1000}}),Queue('Pending Transaction Queue'),Queue('Employee Sync Queue'),Queue('Weightbin Queue')];
 
+ plcCommandQueue.process( async (job,done)=>{
+    const res = await writePLC(job);
+    done(null,res);
+ })
 
 plcQueue.process(  (job,done)=>{
     client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 }).then(x=>
@@ -55,6 +59,7 @@ plcQueue.process(  (job,done)=>{
     );
     done();
 });
+
 scaleQueue.process((job,done)=>{
   console.log('scale loading');
 	getScales50Kg();
@@ -77,7 +82,7 @@ weightbinQueue.process(async(job,done)=>{
 const serverAdapter = new ExpressAdapter();
 serverAdapter.setBasePath('/queues');
 const bullBoard = createBullBoard({
-  queues: [new BullAdapter(scaleQueue),new BullAdapter(plcQueue),new BullAdapter(pendingQueue),new BullAdapter(employeeQueue),new BullAdapter(weightbinQueue)],
+  queues: [new BullAdapter(plcCommandQueue),new BullAdapter(scaleQueue),new BullAdapter(plcQueue),new BullAdapter(pendingQueue),new BullAdapter(employeeQueue),new BullAdapter(weightbinQueue)],
   serverAdapter: serverAdapter,
   options:{
     uiConfig:{
@@ -86,7 +91,7 @@ const bullBoard = createBullBoard({
   }
 });
 app.use('/queues',serverAdapter.getRouter());
-export { Server, io,scaleQueue,employeeQueue,weightbinQueue,pendingQueue,plcQueue };
+export { Server, io,scaleQueue,plcCommandQueue,employeeQueue,weightbinQueue,pendingQueue,plcQueue };
 
 app.use(RollingDoorRoute);
 app.use(ScannerRoute);
