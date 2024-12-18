@@ -70,7 +70,7 @@ export const UpdateBinWeight = async (req,res) =>{
     res.status(200).json({msg:'ok'});
 }
 export const SyncTransaction = async ()=>{
-    const data = await db.query("Select t.id,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
+    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
     if (!data || data.length < 1)
         return data;
     const pending = data[0];
@@ -86,7 +86,7 @@ export const SyncTransaction = async ()=>{
             if (rackTargets.includes(pending[i].name))
             {
                 const weightResponse = await apiClient.post(`http://${process.env.PIDSG}/api/pid/sendWeight`,{
-                            binname: pending[i].name,
+                            binname: pending[i].binName,
                             weight: pending[i].step2value
                 });
             }
