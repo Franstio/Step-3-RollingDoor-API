@@ -53,6 +53,9 @@ export const writePLC = async (data)=>{
     let r = {data:[0]};
     try
     {
+        if (!client.isOpen)
+            plcCommandQueue.add(data,{delay:1000});
+
         client.setID(data.id);
         r = await client.writeRegister(data.address,data.value);
         return r;
@@ -61,7 +64,7 @@ export const writePLC = async (data)=>{
     {
         const check =err.message || err;
         console.log(err.message || err);
-        plcCommandQueue.add(data);
+//        plcCommandQueue.add(data);
         return check;
     }
 }
