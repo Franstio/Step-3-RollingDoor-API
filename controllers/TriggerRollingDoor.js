@@ -236,14 +236,14 @@ export const step4ActivedDoor = async (req,res) => {
         if (err.name=="TransactionTimedOutError")
         {
             if (doorStatus) {
-                res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val,plcres: res2});
+                res.status(200).json({ msg: `Rolling Door Buka `,clientId: _bin.toJSON().clientId,address:action,value:val,plcres: 'PLC TIMED OUT'});
             } else {
-                res.status(200).json({ msg: `Rolling Door Tutup`,clientId:_bin.toJSON().clientId,address:action,value:val,plcres: res2 });
+                res.status(200).json({ msg: `Rolling Door Tutup`,clientId:_bin.toJSON().clientId,address:action,value:val,plcres: 'PLC TIMED OUT' });
             }
         }
         else
         {
-        res.status(500).json({err:err,clientId:_bin.toJSON().clientId,address:action,value:val});
+        res.status(500).json({err:err.name,errMsg:err.message,clientId:_bin.toJSON().clientId,address:doorStatus ? 20 : 21,value:val});
         }
     }
 }
