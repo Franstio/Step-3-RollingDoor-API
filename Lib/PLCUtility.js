@@ -64,7 +64,8 @@ export const writePLC = async (data)=>{
     {
         const check =err.message || err;
         console.log(err.message || err);
-        plcCommandQueue.add(data,{delay: 500});
+        if (err.message=="Timed out" || err.includes("CRC"))
+            plcCommandQueue.add(data,{delay: 500});
         return check;
     }
 }
