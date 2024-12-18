@@ -46,7 +46,7 @@ const [plcCommandQueue,plcQueue,scaleQueue,pendingQueue,employeeQueue,weightbinQ
  = [Queue('PLC Command Queue'),Queue('PLC Connection Queue',{limiter:{max:3,duration:1000}}),Queue('Scale Queue',{limiter:{max:3,duration:1000}}),Queue('Pending Transaction Queue'),Queue('Employee Sync Queue'),Queue('Weightbin Queue')];
 
  plcCommandQueue.process( async (job,done)=>{
-    const res = await writePLC(job);
+    const res = await writePLC(job.data);
     done(null,res);
  })
 
