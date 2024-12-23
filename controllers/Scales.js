@@ -22,7 +22,7 @@ export const getScales50Kg = () => {
 			try {
 				const arData = rawData.toString().split(',');
 				let res = arData[arData.length-1];
-				let val = res.trim().replace("Kg","");
+				let val = res.trim().replace("+","").replace("Kg","");
 				val = val.substring(1,val.length);
 				val = parseFloat(val);
 				if (res[0]=='-')
