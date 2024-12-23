@@ -81,7 +81,7 @@ export const SyncTransaction = async ()=>{
     const rackTargets = rackTargetName.split(",");
     for (let i=0;i<pending.length;i++)
     {
-        const status = pending[i].status.split('|');
+        let status = pending[i].status.split('|');
         if (!status || status.length < 3  )
             continue;
         const level = parseInt(status[2]);
