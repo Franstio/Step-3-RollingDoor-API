@@ -1,5 +1,4 @@
-import {config} from 'dotenv';
-config();
+import './env.js';
 import express from "express";
 import RollingDoorRoute from "./routes/RollingDoorRoute.js";
 import ScannerRoute from "./routes/ScannerRoute.js";

@@ -1,8 +1,6 @@
 import ModbusRTU from 'modbus-serial';
 import bin from '../models/BinModel.js';
-import { config } from 'dotenv';
 import { plcCommandQueue } from '../index.js';
-config();
 
 const  client = new ModbusRTU();
 
