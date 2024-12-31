@@ -6,7 +6,7 @@ const transactionRateLimit = rateLimit({
     max:1,
     windowMs: 1000,
     message: "Transaction In Running"
-  });
+  }); 
 router.post('/ScanBadgeid', ScanBadgeid);
 router.post('/ScanContainer', ScanContainer);
 router.post("/SaveTransaksi",transactionRateLimit,SaveTransaksi);
