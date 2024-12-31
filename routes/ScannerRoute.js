@@ -1,8 +1,12 @@
 import express from "express";
 import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI, syncAll} from "../controllers/Employee.js"
-import { plcQueue,pendingQueue,weightbinQueue,employeeQueue,scaleQueue, transactionRateLimit } from "../index.js";
+import { plcQueue,pendingQueue,weightbinQueue,employeeQueue,scaleQueue } from "../index.js";
 const router = express.Router();
-
+const transactionRateLimit = rateLimit({
+    max:1,
+    windowMs: 1000,
+    message: "Transaction In Running"
+  });
 router.post('/ScanBadgeid', ScanBadgeid);
 router.post('/ScanContainer', ScanContainer);
 router.post("/SaveTransaksi",transactionRateLimit,SaveTransaksi);

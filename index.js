@@ -15,14 +15,9 @@ import Queue from 'bull';
 import { ExpressAdapter } from '@bull-board/express';
 import {createBullBoard} from '@bull-board/api';
 import {BullAdapter} from '@bull-board/api/bullAdapter.js';
-import rateLimit from 'express-rate-limit';
 const app = express();
 const server = http.createServer(app);
-const transactionRateLimit = rateLimit({
-  max:1,
-  windowMs: 1000,
-  message: "Transaction In Running"
-});
+
 try {
   await db.authenticate();
   console.log('Database terhubung..');
