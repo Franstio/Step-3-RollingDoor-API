@@ -53,12 +53,22 @@ export const ScanContainer = async (req, res) => {
 };
 export const SaveTransaksi = async (req,res) => {
     const {payload} = req.body;
-    payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
-    let state = await transaction.create(payload);
-    state = await state.save();
-    await db.query(`Update container set step2value=0 where name='${payload.containerName}';`);
-    pendingQueue.add({id:3});
-    res.status(200).json({msg:state});
+    const tr =await db.transaction();
+    try
+    {
+        payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
+        let state = await transaction.create(payload,{transaction:tr});
+        await db.query(`Update container set step2value=0 where name='${payload.containerName}';`,
+        {transaction: tr});
+        await tr.commit();
+        pendingQueue.add({id:3});
+        res.status(200).json({msg:state});
+    }
+    catch (er)
+    {
+        await tr.rollback();
+        res.status(500).json({msg:"Transaction Cancelled",err:er.message || er});
+    }
 }
 export const UpdateBinWeight = async (req,res) =>{
     const {binId,neto} = req.body;
