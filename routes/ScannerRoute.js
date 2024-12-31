@@ -1,11 +1,11 @@
 import express from "express";
 import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI, syncAll} from "../controllers/Employee.js"
-import { plcQueue,pendingQueue,weightbinQueue,employeeQueue,scaleQueue } from "../index.js";
+import { plcQueue,pendingQueue,weightbinQueue,employeeQueue,scaleQueue, transactionRateLimit } from "../index.js";
 const router = express.Router();
 
 router.post('/ScanBadgeid', ScanBadgeid);
 router.post('/ScanContainer', ScanContainer);
-router.post("/SaveTransaksi",SaveTransaksi);
+router.post("/SaveTransaksi",transactionRateLimit,SaveTransaksi);
 router.post('/UpdateBinWeight',UpdateBinWeight)
 router.post('/CheckBinCapacity',CheckBinCapacity)
 router.get('/SyncPending',SyncAPI);
