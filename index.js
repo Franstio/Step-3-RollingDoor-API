@@ -90,7 +90,7 @@ const bullBoard = createBullBoard({
   }
 });
 app.use('/queues',serverAdapter.getRouter());
-export { Server, io,scaleQueue,plcCommandQueue,employeeQueue,weightbinQueue,pendingQueue,plcQueue,transactionRateLimit };
+export { Server, io,scaleQueue,plcCommandQueue,employeeQueue,weightbinQueue,pendingQueue,plcQueue };
 
 app.use(RollingDoorRoute);
 app.use(ScannerRoute);
