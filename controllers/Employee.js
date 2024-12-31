@@ -52,6 +52,9 @@ export const ScanContainer = async (req, res) => {
     }
 };
 export const SaveTransaksi = async (req,res) => {
+    await new Promise((resolve) => {
+        setTimeout(resolve, 500);
+    });
     const {payload} = req.body;
     const tr =await db.transaction({isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE});
     try
