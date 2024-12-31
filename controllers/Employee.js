@@ -7,7 +7,7 @@ import moment from 'moment';
 import { ToggleRollingDoor } from "./TriggerRollingDoor.js";
 import db from "../config/db.js";   
 import axios from 'axios';
-import { QueryTypes } from "sequelize";
+import { QueryTypes, Transaction } from "sequelize";
 import { employeeQueue, pendingQueue, weightbinQueue } from "../index.js";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
@@ -53,7 +53,7 @@ export const ScanContainer = async (req, res) => {
 };
 export const SaveTransaksi = async (req,res) => {
     const {payload} = req.body;
-    const tr =await db.transaction();
+    const tr =await db.transaction({isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE});
     try
     {
         payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
