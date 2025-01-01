@@ -72,6 +72,7 @@ export const SaveTransaksi = async (req,res) => {
     }
     catch (er)
     {
+        console.log(er.message || er);
         await tr.rollback();
         res.status(500).json({msg:"Transaction Cancelled",err:er.message || er});
     }
