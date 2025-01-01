@@ -59,11 +59,14 @@ export const SaveTransaksi = async (req,res) => {
     const tr =await db.transaction({isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE});
     try
     {
-        payload.recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
-        let state = await transaction.create(payload,{transaction:tr});
-        await db.query(`Update container set step2value=0 where name='${payload.containerName}';`,
-        {transaction: tr});
-        await tr.commit();
+        for (let i=0;i<payload.length;i++)
+        {
+            payload[i].recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
+            let state = await transaction.create(payload[i],{transaction:tr});
+            await db.query(`Update container set step2value=0 where name='${payload[i].containerName}';`,
+            {transaction: tr});
+            await tr.commit();
+        }
         pendingQueue.add({id:3});
         res.status(200).json({msg:state});
     }
