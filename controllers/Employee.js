@@ -65,8 +65,8 @@ export const SaveTransaksi = async (req,res) => {
             let state = await transaction.create(payload[i],{transaction:tr});
             await db.query(`Update container set step2value=0 where name='${payload[i].containerName}';`,
             {transaction: tr});
-            await tr.commit();
         }
+        await tr.commit();
         pendingQueue.add({id:3});
         res.status(200).json({msg:state});
     }
