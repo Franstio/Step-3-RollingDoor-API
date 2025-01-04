@@ -18,6 +18,7 @@ router.get('/employee-sync',syncEmployeePIDSGAPI);
 router.get('/bin-sync',syncPIDSGBinAPI);
 router.get('/container-sync',syncPIDSGBinContainerAPI);
 router.get('/sync-all',syncAll);
+router.get('/ping',(req,res)=>res.json({msg:"ok"}));
 router.get('/clean',(req,res)=>{
     plcQueue.obliterate({force:true});
     scaleQueue.obliterate({force:true});
