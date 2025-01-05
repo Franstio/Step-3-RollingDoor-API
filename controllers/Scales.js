@@ -16,7 +16,7 @@ export const getScales50Kg = () => {
 	});
 //	console.log("Timbangan PORT: "+ process.env.PORT_TIMBANGAN);
 
-		Timbangan.open();
+//		Timbangan.open();
 		Timbangan.on('data', (rawData) => {
 			// Kirim data yang diterima sebagai respons ke clien
 			try {
