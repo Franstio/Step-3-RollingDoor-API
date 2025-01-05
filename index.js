@@ -60,7 +60,7 @@ plcQueue.process(  (job,done)=>{
 });
 
 scaleQueue.process((job,done)=>{
-  console.log('scale loading');
+  console.log(job.data.from || '');
 	getScales50Kg();
 	done();
 });

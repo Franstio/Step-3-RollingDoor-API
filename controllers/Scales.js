@@ -37,7 +37,7 @@ export const getScales50Kg = () => {
 				console.log('1');
 				console.log(err);
 				Timbangan.close(()=>
-				scaleQueue.add({type:'scale'},{
+				scaleQueue.add({type:'scale',from: `Scale:Error Failed Parse ${rawData.toString()} `},{
 					delay: 3000
 				}));
 				return;
@@ -49,14 +49,14 @@ export const getScales50Kg = () => {
 
 			console.log(error.message);		
 			Timbangan.close(()=>
-			scaleQueue.add({type:'scale'},{
+			scaleQueue.add({type:'scale',from: 'Scale:Error'},{
 				delay: 3000
 			}));
 		});
 
 	} catch (error) {
 		console.log('3');
-		scaleQueue.add({type:'scale'},{
+		scaleQueue.add({type:'scale',from: 'Scale:Error 2'},{
 			delay: 3000
 		});
 	}
