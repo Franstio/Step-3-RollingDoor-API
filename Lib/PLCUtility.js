@@ -52,7 +52,7 @@ export const writePLC = async (data)=>{
     try
     {
         if (!client.isOpen)
-            plcCommandQueue.add(data,{delay:1000});
+            plcCommandQueue.add(data,{delay:1000,removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
 
         client.setID(data.id);
         r = await client.writeRegister(data.address,data.value);
@@ -63,11 +63,11 @@ export const writePLC = async (data)=>{
         const check =err.message || err;
         console.log(err.message || err);
         if (err.message=="Timed out" || err.message.includes("CRC"))
-            plcCommandQueue.add(data,{delay: 500});
+            plcCommandQueue.add(data,{delay: 500,removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
         return check;
     }
 }
 export const writeCMD = (data)=>{
     
-    plcCommandQueue.add(data,{priority: 1});
+    plcCommandQueue.add(data,{priority: 1,removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
 }

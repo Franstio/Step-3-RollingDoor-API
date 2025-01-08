@@ -51,9 +51,9 @@ const [plcCommandQueue,plcQueue,scaleQueue,pendingQueue,employeeQueue,weightbinQ
 
 plcQueue.process(  (job,done)=>{
     client.connectRTU(process.env.PORT_PLC, { baudRate: 9600 }).then(x=>
-      client.setTimeout(1000)).catch(er=>{
+      client.setTimeout(3000)).catch(er=>{
         console.log('plc error');
-        plcQueue.add({type:'plc'},{delay:3000});
+        plcQueue.add({type:'plc'},{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
       }
     );
     done();
@@ -106,11 +106,11 @@ app.use(ScalesRoute);
 }); 
 
 server.listen(port, () => {
-  pendingQueue.add({id:1});
-  employeeQueue.add({id:2});
-  weightbinQueue.add({id:3});
-  scaleQueue.add({type:'scale',from:'index'});
-  plcQueue.add({type:'plc'});
+  pendingQueue.add({id:1},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
+  employeeQueue.add({id:2},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
+  weightbinQueue.add({id:3},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
+  scaleQueue.add({type:'scale',from:'index'},{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
+  plcQueue.add({type:'plc'}),{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}};
   console.log(`Server up and running on port ${port}`);
 });
 console.log("check max weight");

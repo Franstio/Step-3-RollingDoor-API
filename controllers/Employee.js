@@ -18,13 +18,7 @@ export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
     try {
         const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId:badgeId,active:1 } });
-        employeeQueue.add({id:1},{
-            attempts: 3,
-            backoff:{
-                type:'fixed',
-                delay: 1000
-            }
-        });
+        employeeQueue.add({id:1},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
         if (user) {
             res.json({ user: user });
         } else {
@@ -39,7 +33,7 @@ export const ScanBadgeid = async (req, res) => {
 export const ScanContainer = async (req, res) => {
     const { containerId } = req.body;
     try {
-        weightbinQueue.add({id:2});
+        weightbinQueue.add({id:2},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
         const container = await Container.findOne({attributes : ['containerId', 'name','station',"weightbin","step2value","idWaste"],include:[{model:waste,as:'waste',required:true,duplicating:false,attributes:['name'], include:[{model:bin,as:'bin',required:true,duplicating:false,attributes:["name","id","type_waste"]}] }], where: { name: containerId } });
         if (container) {
             res.json({ container:container });
@@ -68,7 +62,7 @@ export const SaveTransaksi = async (req,res) => {
             {transaction: tr});
         }
         await tr.commit();
-        pendingQueue.add({id:3});
+        pendingQueue.add({id:3},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
         res.status(200).json({msg:state});
     }
     catch (er)

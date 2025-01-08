@@ -37,9 +37,7 @@ export const getScales50Kg = () => {
 				console.log('1');
 				console.log(err);
 				Timbangan.close(()=>
-				scaleQueue.add({type:'scale',from: `Scale:Error Failed Parse ${rawData.toString()} `},{
-					delay: 3000
-				}));
+				scaleQueue.add({type:'scale',from: `Scale:Error Failed Parse ${rawData.toString()} `},{delay:1000,removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}}));
 				return;
 			}
 		});
@@ -50,14 +48,16 @@ export const getScales50Kg = () => {
 			console.log(error.message);		
 			Timbangan.close(()=>
 			scaleQueue.add({type:'scale',from: 'Scale:Error'},{
-				delay: 3000
+				delay: 3000,
+				removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}
 			}));
 		});
 
 	} catch (error) {
 		console.log('3');
 		scaleQueue.add({type:'scale',from: 'Scale:Error 2'},{
-			delay: 3000
+			delay: 3000,
+			removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}
 		});
 	}
 };

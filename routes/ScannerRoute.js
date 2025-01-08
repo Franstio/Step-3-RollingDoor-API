@@ -28,8 +28,8 @@ router.get('/clean',(req,res)=>{
     return res.json({msg:"ok"},200);
 });
 router.get('/start-work',(req,res)=>{
-    scaleQueue.add({type:'scale'});
-    plcQueue.add({type:'plc'});
+    scaleQueue.add({type:'scale'},{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
+    plcQueue.add({type:'plc'},{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
     return res.json({msg:'ok'},200);
 })
 export default router;
