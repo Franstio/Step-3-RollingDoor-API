@@ -1,7 +1,7 @@
 import ModbusRTU from 'modbus-serial';
 import bin from '../models/BinModel.js';
 import { plcCommandQueue } from '../index.js';
-
+import { SerialPort } from 'serialport';
 let  client = new ModbusRTU();
 let sp = null;
 
