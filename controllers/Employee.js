@@ -88,6 +88,7 @@ export const SendToPIDSG = async (data)=>{
     for (let i=0;i<data.length;i++)
     {
         const status = data[i].status.split('|');
+        console.log(data[i]);
         if (!status || status.length < 3  )
             continue;
         try
