@@ -81,75 +81,74 @@ export const UpdateBinWeight = async (req,res) =>{
    // await switchLamp(data.id,"RED",data.weight >= parseFloat(data.max_weight))
     res.status(200).json({msg:'ok'});
 }
-export const SyncTransaction = async ()=>{
-    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
-    if (!data || data.length < 1)
-        return data;
-    const pending = data[0];
-    if (!pending || pending.length<1 )
-        return pending;
+export const SendToPIDSG = async (data)=>{
     
     const rackTargetName = process.env.RACK_TARGET_CONTAINER;
     const rackTargets = rackTargetName.split(",");
-    for (let i=0;i<pending.length;i++)
+    for (let i=0;i<data.length;i++)
     {
-        const status = pending[i].status.split('|');
+        const status = data[i].status.split('|');
         if (!status || status.length < 3  )
             continue;
-        let level = parseInt(status[2]);
         try
         {
-            
-
                 try
                 {
                     const response = await apiClient.post(
-                        `http://${process.env.REACT_APP_PIDSG}/api/pid/activityLogbyPcAll`,
+                        `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
                         {
-                          badgeno: pending[i].badgeId,
+                          badgeno: data[i].badgeId,
                           stationname: "STEP 3 COLLECTION",
-                          frombin: pending[i].containerName, 
-                          weight: parseFloat(pending[i].neto) + parseFloat(pending[i].weightbin),
+                          frombin: data[i].containerName, 
+                          weight: parseFloat(data[i].neto) + parseFloat(data[i].weightbin),
                           activity: "Movement by System",
                           filename: null,
                           postby: "Local Step 3",
-                          tobin: pending[i].binName ,
-                          postDate: pending[i].recordDate,
-                          binname:rackTargets.includes(pending[i].containerName) ?  pending[i].containerName : '',
-                          step2value: rackTargets.includes(pending[i].containerName) ? pending[i].step2value : '',
+                          tobin: data[i].binName ,
+                          postDate: data[i].recordDate,
+                          binname:rackTargets.includes(data[i].containerName) ?  data[i].containerName : '',
+                          step2value: rackTargets.includes(data[i].containerName) ? data[i].step2value : '',
                         }
                       );
                     if (!response.data.success)
                     {
-                        status[2] = 2;
-                        pending[i].status  = 'Pending|PIDSG|2';
-                        pending[i].isSuccess = false;        
-                        await db.query(`Update transaction set status='${pending[i].status}',isSuccess=${pending[i].isSuccess ? 1 : 0 } where id='${pending[i].id || pending[i].Id}' `);
+                        data[i].status  = 'Pending|PIDSG|1';
+                        data[i].isSuccess = false;        
+                        await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
                         continue;
                     }
                 }
                 catch (err)
                 {
                     console.log(err.message || err);
-                    status[2] = 2;
-                    pending[i].status  = 'Pending|PIDSG|2';
-                    pending[i].isSuccess = false;        
-                    await db.query(`Update transaction set status='${pending[i].status}',isSuccess=${pending[i].isSuccess ? 1 : 0 } where id='${pending[i].id || pending[i].Id}' `);
+                    data[i].status  = 'Pending|PIDSG|1';
+                    data[i].isSuccess = false;        
+                    await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
                     continue;
                 }
-            pending[i].status  ='Done';
-            pending[i].isSuccess = true;
+            data[i].status  ='Done';
+            data[i].isSuccess = true;
 //            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
         }
         catch(err)
         {
-            pending[i].status  = 'Pending|PIDSG|1';
-            pending[i].isSuccess = false;
+            data[i].status  = 'Pending|PIDSG|1';
+            data[i].isSuccess = false;
             console.log(err?.message|| 'ERROR');
         }
         
-        await db.query(`Update transaction set status='${pending[i].status}',isSuccess=${pending[i].isSuccess ? 1 : 0 } where id='${pending[i].id || pending[i].Id}' `);
+        await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
+        return data;
     }
+}
+export const SyncTransaction = async ()=>{
+    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
+    if (!data || data.length < 1)
+        return data;
+    let pending = data[0];
+    if (!pending || pending.length<1 )
+        return pending;
+    pending = await SendToPIDSG(pending);
     return pending;
 }
 export const SyncAPI =async (req,res) =>
