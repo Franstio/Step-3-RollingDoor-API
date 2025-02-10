@@ -88,7 +88,6 @@ export const SendToPIDSG = async (data)=>{
     for (let i=0;i<data.length;i++)
     {
         const status = data[i].status.split('|');
-        console.log(data[i]);
         if (!status || status.length < 3  )
             continue;
         try
@@ -111,6 +110,7 @@ export const SendToPIDSG = async (data)=>{
                           step2value: rackTargets.includes(data[i].containerName) ? data[i].step2value : '',
                         }
                       );
+                    console.log(response);
                     if (!response.data.success)
                     {
                         data[i].status  = 'Pending|PIDSG|1';
