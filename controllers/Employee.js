@@ -139,8 +139,8 @@ export const SendToPIDSG = async (data)=>{
         }
         
         await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
-        return data;
     }
+    return data;
 }
 export const SyncTransaction = async ()=>{
     const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';",{type: QueryTypes.SELECT});
