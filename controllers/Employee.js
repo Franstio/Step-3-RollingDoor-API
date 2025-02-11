@@ -143,12 +143,10 @@ export const SendToPIDSG = async (data)=>{
     }
 }
 export const SyncTransaction = async ()=>{
-    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';");
+    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';",{type: QueryTypes.SELECT});
     if (!data || data.length < 1)
         return data;
-    let pending = data[0];
-    if (!pending || pending.length<1 )
-        return pending;
+    let pending = data;
     pending = await SendToPIDSG(pending);
     return pending;
 }
