@@ -2,6 +2,7 @@ import express from "express";
 import rateLimit from "express-rate-limit";
 import {ScanBadgeid,ScanContainer,SaveTransaksi,UpdateBinWeight,CheckBinCapacity, SyncAPI, syncEmployeePIDSGAPI, syncPIDSGBinAPI, syncPIDSGContainer, syncPIDSGBinContainerAPI, syncAll} from "../controllers/Employee.js"
 import { pendingQueue,weightbinQueue,employeeQueue,scaleQueue } from "../index.js";
+import { Step4Check } from "../controllers/TriggerRollingDoor.js";
 const router = express.Router();
 const transactionRateLimit = rateLimit({
     max:1,
@@ -29,5 +30,6 @@ router.get('/clean',(req,res)=>{
 router.get('/start-work',(req,res)=>{
     scaleQueue.add({type:'scale'},{removeOnFail:{age: 60*10,count:10},timeout:3000,removeOnComplete:{age:60,count:5}});
     return res.json({msg:'ok'},200);
-})
+});
+router.get('/step4-check/:binname',async (req,res)=>{await Step4Check(req.params.binname);return res.json({msg:"ok"})})
 export default router;
