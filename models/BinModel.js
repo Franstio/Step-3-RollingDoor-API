@@ -24,6 +24,10 @@ const bin = db.define('bin', {
     },
     clientId: {
         type: DataTypes.INTEGER
+    },
+    last_empty:
+    {
+        type: DataTypes.DATE
     }
 }, {
     freezeTableName: true,

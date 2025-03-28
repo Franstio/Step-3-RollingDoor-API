@@ -3,7 +3,10 @@ import client, { readCMD, switchLamp, writeCMD } from '../Lib/PLCUtility.js';
 import Container from "../models/ContainerModel.js"
 import waste from "../models/WesteModel.js";
 import bin from "../models/BinModel.js";
-import { where } from 'sequelize';
+import { QueryTypes, where } from 'sequelize';
+import axios from 'axios';
+import db from '../config/db.js';
+import moment from 'moment';
 
 const getClientId =  async (rollingDoorId)=>{
     try
@@ -123,7 +126,24 @@ export const switchLampAPI = async (req,res) => {
     await switchLamp(id,lamp,value=='1');
     res.status(200).json({msg:"ok"});
 }
-
+export const Step4Check = async (binname)=>{
+    try
+    {
+        const res = await axios.get(`http://${process.env.PIDSG}/api/pid/step4/${binname}`);
+        const data = res.data.result;
+        if (!data || data.length < 1)
+            return false;
+        await db.query("UPDATE Bin Set last_empty=?,weight=0 where name=?",{
+            type:QueryTypes.UPDATE,
+            replacements:[moment(data[0].dt).format('YYYY-MM-DD HH:mm:ss'),data[0].frombin_name]
+        });
+    }
+    catch (er)
+    {
+        console.log(er);
+        return false;
+    }
+}
 
 export const rollingdoorUpManualWeb = async (req, res) => {
         const {idRollingDoor,role} = req.body;
@@ -222,6 +242,9 @@ export const step4ActivedDoor = async (req,res) => {
     }
     let action = doorStatus ? 20 : 21;
     const val = 1;
+    setTimeout(async ()=>{
+        await Step4Check(name);
+    },1);
     try
     {
         writeCMD({id:_bin.toJSON().clientId,address:action,value:val});
