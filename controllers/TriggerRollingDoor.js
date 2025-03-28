@@ -141,7 +141,7 @@ export const Step4Check = async (binname)=>{
             return false;
         await db.query("UPDATE Bin Set last_empty=?,weight=0 where name=?",{
             type:QueryTypes.UPDATE,
-            replacements:[lastDt,data[0].frombin_name]
+            replacements:[lastDt.toString(),data[0].frombin_name]
         });
         return true;
     }
