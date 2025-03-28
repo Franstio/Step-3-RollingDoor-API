@@ -133,10 +133,17 @@ export const Step4Check = async (binname)=>{
         const data = res.data.result;
         if (!data || data.length < 1)
             return false;
+        const lastDt = moment(data[0].dt).format('YYYY-MM-DD HH:mm:ss');
+        const check = await db.query(`select * from bin where name='${binname}' and last_empty < '${lastDt.toString()}';`,{
+            type:QueryTypes.SELECT
+        });
+        if (check.length < 1)
+            return false;
         await db.query("UPDATE Bin Set last_empty=?,weight=0 where name=?",{
             type:QueryTypes.UPDATE,
-            replacements:[moment(data[0].dt).format('YYYY-MM-DD HH:mm:ss'),data[0].frombin_name]
+            replacements:[lastDt,data[0].frombin_name]
         });
+        return true;
     }
     catch (er)
     {
