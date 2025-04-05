@@ -58,8 +58,6 @@ export const SaveTransaksi = async (req,res) => {
         {
             payload[i].recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
             state.push(await transaction.create(payload[i],{transaction:tr}));
-            await db.query(`Update container set step2value=0 where name='${payload[i].containerName}';`,
-            {transaction: tr});
         }
         await tr.commit();
         pendingQueue.add({id:3},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
@@ -139,6 +137,7 @@ export const SendToPIDSG = async (data)=>{
         }
         
         await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
+        await db.query(`Update container set step2value=0 where name='${data[i].containerName}';`);
     }
     return data;
 }
