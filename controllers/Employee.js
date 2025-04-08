@@ -17,7 +17,7 @@ const apiClient = axios.create({
 export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
     try {
-        const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId:badgeId,active:1 } });
+      const user = await Users.findOne({ attributes: ['badgeId',"username"], where: { badgeId:badgeId,active:1 } });
         employeeQueue.add({id:1},{removeOnFail:{age: 60*10,count:10},timeout:5000,removeOnComplete:{age:60,count:5}});
         if (user) {
             res.json({ user: user });
@@ -57,6 +57,7 @@ export const SaveTransaksi = async (req,res) => {
         for (let i=0;i<payload.length;i++)
         {
             payload[i].recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
+            payload[i].status = "PENDING|PIDSG|1";
             state.push(await transaction.create(payload[i],{transaction:tr}));
         }
         await tr.commit();
@@ -85,9 +86,6 @@ export const SendToPIDSG = async (data)=>{
     const rackTargets = rackTargetName.split(",");
     for (let i=0;i<data.length;i++)
     {
-        const status = data[i].status.split('|');
-        if (!status || status.length < 3  )
-            continue;
         try
         {
                 try
