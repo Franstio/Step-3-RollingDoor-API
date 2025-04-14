@@ -68,7 +68,7 @@ const syncRack = async () => {
     for (let i = 0; i < racks.length; i++) {
       const rack = racks[i];
       try {
-        const res = await axios.get($`http://${rack}.local:5000/Pending-List`, {
+        const res = await axios.get(`http://${rack}.local:5000/Pending-List`, {
           timeout: 15000,
         });
         console.log(res.status);
