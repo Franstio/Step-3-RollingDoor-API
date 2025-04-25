@@ -1,6 +1,6 @@
 import express from "express";
 import {rollingdoorUp,rollingDoorDown,triggerAvailableBin, switchLampAPI,rollingDoorDownManualWeb,rollingdoorUpManualWeb, step4ActivedDoor} from "../controllers/TriggerRollingDoor.js"
-import { UpdateStep2Value } from "../controllers/Employee.js";
+import { getDoorData, UpdateStep2Value } from "../controllers/Employee.js";
 
 const router = express.Router();
 
@@ -15,4 +15,5 @@ router.post('/activedDoor',step4ActivedDoor);
 router.put('/step2value/:containerName',UpdateStep2Value);
 
 router.post('/step2value/:containerName',UpdateStep2Value);
+router.get('/door',getDoorData);
 export default router;

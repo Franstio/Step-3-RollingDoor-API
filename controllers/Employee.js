@@ -340,3 +340,11 @@ export const syncPIDSGBinAPI = async (req,res)=>{
 export const syncPIDSGBinContainerAPI = async (req,res)=>{
     return res.json(await syncPIDSGContainer());
   }
+
+
+export const getDoorData = async (req,res)=>{
+    const data = await db.query("Select row_number() over (order by id) as no, name,weight, max_weight as capacity from bin;",{
+        type: QueryTypes.SELECT
+    });
+    return res.json(data);
+}
