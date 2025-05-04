@@ -164,7 +164,7 @@ export const Step4Check = async (binname)=>{
             type:QueryTypes.SELECT,
             replacements: [data[0].frombin_name]
         });
-        await transaction.create({
+        const t = await transaction.create({
             badgeId: data[0].badgeno,
             idContainer: checkContainer[0].containerid,
             idWaste: checkContainer[0].idWaste,
@@ -173,6 +173,7 @@ export const Step4Check = async (binname)=>{
             binId: checkBin[0].id,
             status: 'SALES'
         });
+        t.save();
         return true;
     }
     catch (er)
