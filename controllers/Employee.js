@@ -93,8 +93,8 @@ export const SendToPIDSG = async (data)=>{
                     const response = await apiClient.post(
                         `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
                         {
+                            stationname: "STEP 3 COLLECTION",
                           badgeno: data[i].badgeId,
-                          stationname: "STEP 3 COLLECTION",
                           frombin: data[i].containerName, 
                           weight: parseFloat(data[i].neto) + parseFloat(data[i].weightbin),
                           activity: "Movement by System",

@@ -16,6 +16,9 @@ const container = db.define('container', {
     weightbin:{
         type: DataTypes.DECIMAL
     },
+    idWaste:{
+        type: DataTypes.INTEGER
+    },
     step2value:{
         type: DataTypes.DECIMAL
     }

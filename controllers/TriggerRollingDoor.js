@@ -7,6 +7,8 @@ import { QueryTypes, where } from 'sequelize';
 import axios from 'axios';
 import db from '../config/db.js';
 import moment from 'moment';
+import transaction from '../models/TransactionModel.js';
+import employee from '../models/EmployeeModel.js';
 
 const getClientId =  async (rollingDoorId)=>{
     try
@@ -142,6 +144,34 @@ export const Step4Check = async (binname)=>{
         await db.query("UPDATE bin Set last_empty=?,weight=0 where name=?",{
             type:QueryTypes.UPDATE,
             replacements:[lastDt.toString(),data[0].frombin_name]
+        });
+        const checkEmp = await db.query('Select 1 from employee where badgeId=?',{
+            type:QueryTypes.SELECT,
+            replacements:[data[0].badgeno]
+        });
+        if (checkEmp.length < 1)
+        {
+            data[0].badgeno = -1;
+        }
+        const checkContainer = await db.query('Select containerId,idWaste from container where name=?',
+        {
+            type:QueryTypes.SELECT,
+            replacements: [data[0].frombin_name]
+        });
+
+        const checkBin = await db.query('Select id from bin where name=?',
+        {
+            type:QueryTypes.SELECT,
+            replacements: [data[0].frombin_name]
+        });
+        await transaction.create({
+            badgeId: data[0].badgeno,
+            idContainer: checkContainer[0].containerid,
+            idWaste: checkContainer[0].idWaste,
+            neto:  parseFloat(data[0].discharge_weight),
+            recordDate: lastDt.toString(),
+            binId: checkBin[0].id,
+            status: 'SALES'
         });
         return true;
     }

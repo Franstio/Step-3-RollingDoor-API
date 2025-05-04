@@ -24,7 +24,7 @@ const transaction = db.define('transaction', {
         type: DataTypes.INTEGER,
     },
     neto   : {
-        type: DataTypes.INTEGER,
+        type: DataTypes.DECIMAL(18,2),
         allowNull: true  
     },
    recordDate: {
