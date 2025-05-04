@@ -164,16 +164,17 @@ export const Step4Check = async (binname)=>{
             type:QueryTypes.SELECT,
             replacements: [data[0].frombin_name]
         });
-        const t = await transaction.create({
-            badgeId: data[0].badgeno,
-            idContainer: checkContainer[0].containerid,
-            idWaste: checkContainer[0].idWaste,
-            neto:  parseFloat(data[0].discharge_weight),
-            recordDate: lastDt.toString(),
-            binId: checkBin[0].id,
-            status: 'SALES'
+        await db.query("INSERT INTO TRANSACTION(badgeid,idcontainer,idwaste,neto,recordDate,binId,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
+            replacements:[
+                data[0].badgeno,
+                checkContainer[0].containerid,
+                checkContainer[0].idWaste,
+                parseFloat(data[0].discharge_weight),
+                lastDt.toString(),
+                checkBin[0].id,
+                'SALES'
+            ]
         });
-        t.save();
         return true;
     }
     catch (er)
