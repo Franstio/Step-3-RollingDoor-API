@@ -153,25 +153,20 @@ export const Step4Check = async (binname)=>{
         {
             data[0].badgeno = -1;
         }
-        const checkContainer = await db.query('Select containerId,idWaste from container where name=?',
-        {
-            type:QueryTypes.SELECT,
-            replacements: [data[0].frombin_name]
-        });
 
-        const checkBin = await db.query('Select id from bin where name=?',
+        const checkBin = await db.query('Select id,name,type_waste from bin where name=?',
         {
             type:QueryTypes.SELECT,
             replacements: [data[0].frombin_name]
         });
-        await db.query("INSERT INTO TRANSACTION(badgeid,idcontainer,idwaste,neto,recordDate,binId,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
+        await db.query("INSERT INTO TRANSACTION(badgeid,idwaste,neto,recordDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,1)",{
             replacements:[
                 data[0].badgeno,
-                checkContainer[0].containerId,
-                checkContainer[0].idWaste,
+                checkBin[0].type_waste,
                 parseFloat(data[0].discharge_weight),
                 lastDt.toString(),
                 checkBin[0].id,
+                checkBin[0].name,
                 'SALES'
             ]
         });
