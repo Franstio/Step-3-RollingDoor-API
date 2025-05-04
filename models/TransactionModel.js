@@ -30,6 +30,10 @@ const transaction = db.define('transaction', {
    recordDate: {
 	type: DataTypes.STRING
    },
+   
+   loginDate:{
+    type: DataTypes.STRING
+   },
    containerName:{
     type: DataTypes.STRING
    },

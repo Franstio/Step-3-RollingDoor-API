@@ -102,6 +102,7 @@ export const SendToPIDSG = async (data)=>{
                           postby: "Local Step 3",
                           tobin: data[i].binName ,
                           postDate: data[i].recordDate,
+                          loginDate: data[i].loginDate,
                           binname:rackTargets.includes(data[i].containerName) ?  data[i].containerName : '',
                           step2value: rackTargets.includes(data[i].containerName) ? data[i].step2value : '',
                         }
