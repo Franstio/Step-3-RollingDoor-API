@@ -167,7 +167,7 @@ export const Step4Check = async (binname)=>{
         await db.query("INSERT INTO TRANSACTION(badgeid,idcontainer,idwaste,neto,recordDate,binId,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
             replacements:[
                 data[0].badgeno,
-                checkContainer[0].containerid,
+                checkContainer[0].containerId,
                 checkContainer[0].idWaste,
                 parseFloat(data[0].discharge_weight),
                 lastDt.toString(),
