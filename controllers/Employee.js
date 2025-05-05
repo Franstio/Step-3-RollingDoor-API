@@ -52,11 +52,12 @@ export const SaveTransaksi = async (req,res) => {
     const {payload} = req.body;
     const tr =await db.transaction({isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE});
     const state = [];
+    const logoutdate = moment().format("YYYY-MM-DD HH:mm:ss");
     try
     {
         for (let i=0;i<payload.length;i++)
         {
-            payload[i].recordDate = moment().format("YYYY-MM-DD HH:mm:ss");
+            payload[i].recordDate = logoutdate;
             payload[i].status = "PENDING|PIDSG|1";
             state.push(await transaction.create(payload[i],{transaction:tr}));
         }
