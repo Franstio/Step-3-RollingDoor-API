@@ -142,7 +142,7 @@ export const SendToPIDSG = async (data)=>{
     return data;
 }
 export const SyncTransaction = async ()=>{
-    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';",{type: QueryTypes.SELECT});
+    const data = await db.query("Select t.id,t.badgeId,t.status,t.isSuccess,t.containerName,t.binName,t.neto,c.weightbin,c.step2value,t.recordDate,t.loginDate from transaction t left join container c on t.idContainer=c.containerId where t.status like '%PENDING%';",{type: QueryTypes.SELECT});
     if (!data || data.length < 1)
         return data;
     let pending = data;
