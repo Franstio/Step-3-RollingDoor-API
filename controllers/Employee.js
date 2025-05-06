@@ -98,7 +98,7 @@ export const SendToPIDSG = async (data)=>{
                           badgeno: data[i].badgeId,
                           frombin: data[i].containerName, 
                           weight: parseFloat(data[i].neto) + parseFloat(data[i].weightbin),
-                          activity: "Movement by System",
+                          activity: "Dispsoe",
                           filename: null,
                           postby: "Local Step 3",
                           tobin: data[i].binName ,
