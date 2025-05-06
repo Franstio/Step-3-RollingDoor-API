@@ -170,6 +170,30 @@ export const Step4Check = async (binname)=>{
                 'SALES'
             ]
         });
+        try
+        {
+        await axios.post(
+            `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
+            {
+                stationname: "STEP 3 COLLECTION",
+              badgeno: data[0].badgeno,
+              frombin: checkBin[0].name, 
+              weight: 0,
+              activity: "SALES",
+              filename: null,
+              postby: "Local Step 3",
+              tobin: checkBin[0].name ,
+              postDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+              loginDate: lastDt.toString(),
+              binname:  '',
+              step2value: '',
+            }
+          );
+        }
+        catch(er)
+        {
+            console.log(er);
+        }
         return true;
     }
     catch (er)
