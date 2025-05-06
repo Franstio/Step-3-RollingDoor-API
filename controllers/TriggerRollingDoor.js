@@ -128,6 +128,42 @@ export const switchLampAPI = async (req,res) => {
     await switchLamp(id,lamp,value=='1');
     res.status(200).json({msg:"ok"});
 }
+export const SalesPidsg = async (salesData)=>{
+        try
+        {
+            await axios.post(
+                `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
+                {
+                    stationname: "STEP 3 COLLECTION",
+                badgeno: salesData.badgeno,
+                frombin: salesData.frombin, 
+                weight: 0,
+                activity: "SALES",
+                filename: null,
+                postby: "Local Step 3",
+                tobin: salesData.tobin ,
+                postDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                loginDate: salesData.loginDate,
+                binname:  '',
+                step2value: '',
+                }
+            );
+          return true;
+        }
+        catch(er)
+        {
+            console.log(er);
+            return false;
+        }
+
+}
+export const SyncSales = async ()=>{
+    const data = await db.query("Select t.id,t.badgeId as badgeno,t.status,t.isSuccess,t.containerName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as postdate,t.loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0;",{type: QueryTypes.SELECT});
+    if (!data || data.length < 1)
+        return data;
+    pending = await SalesPidsg(data);
+    return pending;
+}
 export const Step4Check = async (binname)=>{
     try
     {
@@ -159,7 +195,14 @@ export const Step4Check = async (binname)=>{
             type:QueryTypes.SELECT,
             replacements: [data[0].frombin_name]
         });
-        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,1)",{
+        const salesRes = await SalesPidsg({
+
+              badgeno: data[0].badgeno,
+              frombin: checkBin[0].name, 
+              tobin: checkBin[0].name ,
+              lastDt: lastDt.toString(),
+        });
+        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
             replacements:[
                 data[0].badgeno,
                 checkBin[0].type_waste,
@@ -167,33 +210,10 @@ export const Step4Check = async (binname)=>{
                 lastDt.toString(),
                 checkBin[0].id,
                 checkBin[0].name,
-                'SALES'
+                'SALES',
+                salesRes ? 1: 0
             ]
         });
-        try
-        {
-        await axios.post(
-            `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
-            {
-                stationname: "STEP 3 COLLECTION",
-              badgeno: data[0].badgeno,
-              frombin: checkBin[0].name, 
-              weight: 0,
-              activity: "SALES",
-              filename: null,
-              postby: "Local Step 3",
-              tobin: checkBin[0].name ,
-              postDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-              loginDate: lastDt.toString(),
-              binname:  '',
-              step2value: '',
-            }
-          );
-        }
-        catch(er)
-        {
-            console.log(er);
-        }
         return true;
     }
     catch (er)
