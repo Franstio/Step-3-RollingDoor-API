@@ -158,7 +158,7 @@ export const SalesPidsg = async (salesData)=>{
 
 }
 export const SyncSales = async ()=>{
-    const data = await db.query("Select t.id,t.badgeId as badgeno,t.status,t.isSuccess,t.containerName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as postdate,t.loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0;",{type: QueryTypes.SELECT});
+    const data = await db.query("Select t.id,'SYSTEM' as badgeno,t.status,t.isSuccess,t.binName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0;",{type: QueryTypes.SELECT});
     if (!data || data.length < 1)
         return data;
     pending = await SalesPidsg(data);
@@ -202,11 +202,12 @@ export const Step4Check = async (binname)=>{
               tobin: checkBin[0].name ,
               lastDt: lastDt.toString(),
         });
-        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
+        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,loginDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
             replacements:[
                 data[0].badgeno,
                 checkBin[0].type_waste,
                 parseFloat(data[0].discharge_weight),
+                lastDt.toString(),
                 lastDt.toString(),
                 checkBin[0].id,
                 checkBin[0].name,
