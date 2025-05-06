@@ -161,7 +161,7 @@ export const SyncSales = async ()=>{
     const data = await db.query("Select t.id,'SYSTEM' as badgeno,t.status,t.isSuccess,t.binName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0;",{type: QueryTypes.SELECT});
     if (!data || data.length < 1)
         return data;
-    pending = await SalesPidsg(data);
+    const pending = await SalesPidsg(data);
     return pending;
 }
 export const Step4Check = async (binname)=>{
