@@ -226,7 +226,7 @@ export const Step4Check = async (binname)=>{
         });
         setTimeout(async ()=>{
            await SyncSales()
-        });
+        },1000);
         return true;
     }
     catch (er)
