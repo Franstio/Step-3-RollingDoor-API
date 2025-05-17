@@ -142,7 +142,7 @@ export const SalesPidsg = async (salesData)=>{
                 filename: null,
                 postby: "Local Step 3",
                 tobin: salesData.tobin ,
-                postDate: moment().format('YYYY-MM-DD HH:mm:ss'),
+                postDate: salesData.loginDate,
                 loginDate: salesData.loginDate,
                 binname:  '',
                 step2value: '',
@@ -163,7 +163,14 @@ export const SyncSales = async ()=>{
         return data;
     let pending=[];
     for (let i=0;i<data.length;i++)
-         pending.push(await SalesPidsg(data[i]));
+    {
+        const res = await SalesPidsg(data[i]);
+        pending.push(res);
+        await db.query(`UPDATE transaction set isSuccess=? where id=?`,{
+            type:QueryTypes.UPDATE,
+            replacements: [res ? 1: 0, data[i].id]
+        });
+    }
     return pending;
 }
 export const Step4Check = async (binname)=>{
@@ -216,6 +223,9 @@ export const Step4Check = async (binname)=>{
                 'SALES',
                 salesRes ? 1: 0
             ]
+        });
+        setTimeout(async ()=>{
+           await SyncSales()
         });
         return true;
     }
