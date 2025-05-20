@@ -157,22 +157,22 @@ export const SalesPidsg = async (salesData)=>{
         }
 
 }
-export const SyncSales = async ()=>{
-    const data = await db.query("Select t.id,'SYSTEM' as badgeno,t.status,t.isSuccess,t.binName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0 and status='SALES';",{type: QueryTypes.SELECT});
-    if (!data || data.length < 1)
-        return data;
-    let pending=[];
-    for (let i=0;i<data.length;i++)
-    {
-        const res = await SalesPidsg(data[i]);
-        pending.push(res);
-        await db.query(`UPDATE transaction set isSuccess=? where id=?`,{
-            type:QueryTypes.UPDATE,
-            replacements: [res ? 1: 0, data[i].id]
-        });
-    }
-    return pending;
-}
+// export const SyncSales = async ()=>{
+//     const data = await db.query("Select t.id,'SYSTEM' as badgeno,t.status,t.isSuccess,t.binName as frombin,t.binName as tobin,t.neto,c.weightbin,c.step2value,t.recordDate as loginDate from transaction t left join container c on t.idContainer=c.containerId where t.isSuccess=0 and status='SALES';",{type: QueryTypes.SELECT});
+//     if (!data || data.length < 1)
+//         return data;
+//     let pending=[];
+//     for (let i=0;i<data.length;i++)
+//     {
+//         const res = await SalesPidsg(data[i]);
+//         pending.push(res);
+//         await db.query(`UPDATE transaction set isSuccess=1 where id=?`,{
+//             type:QueryTypes.UPDATE,
+//             replacements: [ data[i].id]
+//         });
+//     }
+//     return pending;
+// }
 export const Step4Check = async (binname)=>{
     try
     {
@@ -221,12 +221,9 @@ export const Step4Check = async (binname)=>{
                 checkBin[0].id,
                 checkBin[0].name,
                 'SALES',
-                salesRes ? 1: 0
+                1
             ]
         });
-        setTimeout(async ()=>{
-           await SyncSales()
-        },1000);
         return true;
     }
     catch (er)

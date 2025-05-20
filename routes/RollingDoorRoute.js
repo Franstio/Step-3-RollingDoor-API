@@ -1,5 +1,5 @@
 import express from "express";
-import {rollingdoorUp,rollingDoorDown,triggerAvailableBin, switchLampAPI,rollingDoorDownManualWeb,rollingdoorUpManualWeb, step4ActivedDoor, SyncSales} from "../controllers/TriggerRollingDoor.js"
+import {rollingdoorUp,rollingDoorDown,triggerAvailableBin, switchLampAPI,rollingDoorDownManualWeb,rollingdoorUpManualWeb, step4ActivedDoor} from "../controllers/TriggerRollingDoor.js"
 import { getDoorData, UpdateStep2Value } from "../controllers/Employee.js";
 
 const router = express.Router();
@@ -16,5 +16,5 @@ router.put('/step2value/:containerName',UpdateStep2Value);
 
 router.post('/step2value/:containerName',UpdateStep2Value);
 router.get('/door',getDoorData);
-router.get('/sales-sync',async (req,res)=>res.json(await SyncSales()));
+//router.get('/sales-sync',async (req,res)=>res.json(await SyncSales()));
 export default router;
