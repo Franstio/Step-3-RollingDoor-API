@@ -211,7 +211,7 @@ export const Step4Check = async (binname)=>{
               tobin: checkBin[0].name ,
               lastDt: lastDt.toString(),
         });
-        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,loginDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,?)",{
+        await db.query("INSERT INTO transaction(badgeid,idwaste,neto,recordDate,loginDate,binId,binName,status,issuccess) VALUES(?,?,?,?,?,?,?,?,?)",{
             replacements:[
                 data[0].badgeno,
                 checkBin[0].type_waste,
