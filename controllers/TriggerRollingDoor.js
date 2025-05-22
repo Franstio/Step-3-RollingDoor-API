@@ -206,7 +206,7 @@ export const Step4Check = async (binname)=>{
         });
         const salesRes = await SalesPidsg({
 
-              badgeno: data[0].badgeno,
+              badgeno: data[0].badgeno == -1 ? "SYSTEM" : data[0].badgeno,
               frombin: checkBin[0].name, 
               tobin: checkBin[0].name ,
               loginDate: lastDt.toString(),
