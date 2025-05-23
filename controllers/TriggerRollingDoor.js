@@ -180,7 +180,7 @@ export const Step4Check = async (binname)=>{
         const data = res.data.result;
         if (!data || data.length < 1)
             return false;
-        const lastDt = moment(data[0].dt).format('YYYY-MM-DD HH:mm:ss');
+        const lastDt = moment().format('YYYY-MM-DD HH:mm:ss');
         const check = await db.query(`select * from bin where name='${binname}' and (last_empty < '${lastDt.toString()}' or last_empty is null);`,{
             type:QueryTypes.SELECT
         });
