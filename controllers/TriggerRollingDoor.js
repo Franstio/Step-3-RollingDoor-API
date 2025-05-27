@@ -176,7 +176,9 @@ export const SalesPidsg = async (salesData)=>{
 export const Step4Check = async (binname)=>{
     try
     {
-        const res = await axios.get(`http://${process.env.PIDSG}/api/pid/step4/${binname}`);
+        const res = await axios.get(`http://${process.env.PIDSG}/api/pid/step4/${binname}`,{
+            timeout:5000
+        });
         const data = res.data.result;
         if (!data || data.length < 1)
             return false;
@@ -339,9 +341,14 @@ export const step4ActivedDoor = async (req,res) => {
     }
     let action = doorStatus ? 20 : 21;
     const val = 1;
-    setTimeout(async ()=>{
+    try
+    {
         await Step4Check(name);
-    },1);
+    }
+    catch (er)
+    {
+        console.log(er?.message || er);   
+    }
     try
     {
         writeCMD({id:_bin.toJSON().clientId,address:action,value:val});
