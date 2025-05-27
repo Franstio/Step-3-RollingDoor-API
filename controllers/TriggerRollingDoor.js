@@ -185,7 +185,7 @@ export const Step4Check = async (binname)=>{
         let s = data[0].dt;
         try
         {
-            s = data[0].dt.replaceAll("T","").replaceAll("Z","");
+            s = data[0].dt.replaceAll("T"," ").replaceAll("Z","");
         }
         catch (e)
         {
