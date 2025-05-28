@@ -118,7 +118,7 @@ export const SendToPIDSG = async (data)=>{
                         data[i].isSuccess = false;        
                         await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
                         await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
-                            replacements : [data[i].id || data[i].Id,`Failed: ${JSON.stringify(response.data)} | ${JSON.stringify(_payload)}`]
+                            replacements : [data[i].id || data[i].Id,`Failed - Pending: ${JSON.stringify(response.data)} | ${JSON.stringify(_payload)}`]
                         });
                         continue;
                     }
@@ -137,7 +137,7 @@ export const SendToPIDSG = async (data)=>{
             data[i].status  ='Done';
             data[i].isSuccess = true;
             await db.query(`insert into log_record(id_transaction,detail,IsSuccess) values(?,?,1)`,{
-                replacements : [data[i].id || data[i].Id,`Success: ${JSON.stringify(response.data)}`]
+                replacements : [data[i].id || data[i].Id,`Success - Done: ${JSON.stringify(response.data)}`]
             })
 //            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
         }
@@ -146,7 +146,7 @@ export const SendToPIDSG = async (data)=>{
             data[i].status  = 'Pending|PIDSG|1';
             data[i].isSuccess = false;
             await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
-                replacements : [data[i].id || data[i].Id,`Failed: ${err?.message|| err} | ${JSON.stringify(_payload)}`]
+                replacements : [data[i].id || data[i].Id,`Failed - Pending: ${err?.message|| err} | ${JSON.stringify(_payload)}`]
             })
             console.log(err?.message|| 'ERROR');
         }
