@@ -109,7 +109,7 @@ export const SendToPIDSG = async (data)=>{
 
                     response = await apiClient.post(
                         `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
-                        ..._payload,
+                        {..._payload},
                       );
                     console.log(response);
                     if (!response.data.success)
