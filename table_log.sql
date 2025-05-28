@@ -1,0 +1,1 @@
+create table log_record(id int primary key auto_increment, id_transaction int null,recordDate datetime default Now(), detail text,IsSuccess bit default 0);

@@ -12,7 +12,7 @@ import { employeeQueue, pendingQueue, weightbinQueue } from "../index.js";
 //import { switchLamp } from "../Lib/PLCUtility.js";
 const apiClient = axios.create({
     withCredentials: false,
-    timeout: 1000,
+    timeout: 15000,
 });
 export const ScanBadgeid = async (req, res) => {
     const { badgeId } = req.body;
@@ -87,26 +87,29 @@ export const SendToPIDSG = async (data)=>{
     const rackTargets = rackTargetName.split(",");
     for (let i=0;i<data.length;i++)
     {
+        const _payload ={
+            stationname: "STEP 3 COLLECTION",
+          badgeno: data[i].badgeId,
+          frombin: data[i].containerName, 
+          weight: parseFloat(data[i].neto) + parseFloat(data[i].weightbin),
+          activity: "Dispose",
+          filename: null,
+          postby: "Local Step 3",
+          tobin: data[i].binName ,
+          postDate: data[i].recordDate,
+          loginDate: data[i].loginDate,
+          binname:rackTargets.includes(data[i].containerName) ?  data[i].containerName : '',
+          step2value: rackTargets.includes(data[i].containerName) ? data[i].step2value : '',
+        };
         try
         {
+            let response = null;
                 try
                 {
-                    const response = await apiClient.post(
+
+                    response = await apiClient.post(
                         `http://${process.env.PIDSG}/api/pid/activityLogbyPcAll`,
-                        {
-                            stationname: "STEP 3 COLLECTION",
-                          badgeno: data[i].badgeId,
-                          frombin: data[i].containerName, 
-                          weight: parseFloat(data[i].neto) + parseFloat(data[i].weightbin),
-                          activity: "Dispose",
-                          filename: null,
-                          postby: "Local Step 3",
-                          tobin: data[i].binName ,
-                          postDate: data[i].recordDate,
-                          loginDate: data[i].loginDate,
-                          binname:rackTargets.includes(data[i].containerName) ?  data[i].containerName : '',
-                          step2value: rackTargets.includes(data[i].containerName) ? data[i].step2value : '',
-                        }
+                        ..._payload,
                       );
                     console.log(response);
                     if (!response.data.success)
@@ -114,6 +117,9 @@ export const SendToPIDSG = async (data)=>{
                         data[i].status  = 'Pending|PIDSG|1';
                         data[i].isSuccess = false;        
                         await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
+                        await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
+                            replacements : [data[i].id || data[i].Id,`Failed: ${JSON.stringify(response.data)} | ${JSON.stringify(_payload)}`]
+                        });
                         continue;
                     }
                 }
@@ -123,16 +129,25 @@ export const SendToPIDSG = async (data)=>{
                     data[i].status  = 'Pending|PIDSG|1';
                     data[i].isSuccess = false;        
                     await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
+                    await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
+                        replacements : [data[i].id || data[i].Id,`Failed: ${err?.message|| err} | ${JSON.stringify(_payload)}`]
+                    })
                     continue;
                 }
             data[i].status  ='Done';
             data[i].isSuccess = true;
+            await db.query(`insert into log_record(id_transaction,detail,IsSuccess) values(?,?,1)`,{
+                replacements : [data[i].id || data[i].Id,`Success: ${JSON.stringify(response.data)}`]
+            })
 //            console.log([pending[i],[response.status,response.data],[response2.status,response2.data],[weightResponse.status,weightResponse.data]]);
         }
         catch(err)
         {
             data[i].status  = 'Pending|PIDSG|1';
             data[i].isSuccess = false;
+            await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
+                replacements : [data[i].id || data[i].Id,`Failed: ${err?.message|| err} | ${JSON.stringify(_payload)}`]
+            })
             console.log(err?.message|| 'ERROR');
         }
         
