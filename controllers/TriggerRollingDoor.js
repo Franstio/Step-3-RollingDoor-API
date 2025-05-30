@@ -343,7 +343,8 @@ export const step4ActivedDoor = async (req,res) => {
     const val = 1;
     try
     {
-        await Step4Check(name);
+        if (!doorStatus)
+            await Step4Check(name);
     }
     catch (er)
     {
