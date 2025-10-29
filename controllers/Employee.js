@@ -130,10 +130,11 @@ export const SendToPIDSG = async (data)=>{
                     data[i].isSuccess = false;        
                     await db.query(`Update transaction set status='${data[i].status}',isSuccess=${data[i].isSuccess ? 1 : 0 } where id='${data[i].id || data[i].Id}' `);
                     await db.query(`insert into log_record(id_transaction,detail) values(?,?)`,{
-                        replacements : [data[i].id || data[i].Id,`Failed: ${err?.message|| err} | ${JSON.stringify(_payload)}`]
+                        replacements : [data[i].id || data[i].Id,`Failed: ${JSON.stringify(err.response.data)} | ${JSON.stringify(_payload)}`]
                     })
                     continue;
                 }
+                console.log(response?.data || "");
             data[i].status  ='Done';
             data[i].isSuccess = true;
             await db.query(`insert into log_record(id_transaction,detail,IsSuccess) values(?,?,1)`,{
