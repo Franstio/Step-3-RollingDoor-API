@@ -45,6 +45,12 @@ export const ScanContainer = async (req, res) => {
         res.status(500).json({ msg: 'Terjadi kesalahan server' });
     }
 };
+export const CheckTransaction = async ()=>{
+    const check = await  db.query("select cast(recorddate as datetime) from transaction where cast(recordDate as datetime) >= now() - interval 1 minute order by id desc limit 0,1",{
+        type: QueryTypes.SELECT
+    });
+    return check.length > 0;
+}
 export const SaveTransaksi = async (req,res) => {
     await new Promise((resolve) => {
         setTimeout(resolve, 500);
@@ -53,6 +59,8 @@ export const SaveTransaksi = async (req,res) => {
     const tr =await db.transaction({isolationLevel: Transaction.ISOLATION_LEVELS.SERIALIZABLE});
     const state = [];
     const logoutdate = moment().format("YYYY-MM-DD HH:mm:ss");
+    if (await CheckTransaction())
+        return res.status(500).json({msg:"Transaction Cancelled (2)"});
     try
     {
         for (let i=0;i<payload.length;i++)
